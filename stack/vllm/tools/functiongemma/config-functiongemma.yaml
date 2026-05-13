@@ -4,8 +4,7 @@ gpu_memory_utilization: 0.05
 model: /models
 host: 0.0.0.0
 port: 8000
-# api_key: CHANGE_PASSWORD
-api_key: 0p3n-w3bu!
+api_key: CHANGE_PASSWORD
 enforce_eager: true
 # uvicorn-log-level: debug
 # kv_cache_dtype: fp8_e4m3
