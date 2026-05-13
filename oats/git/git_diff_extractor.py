@@ -21,7 +21,17 @@ log = cl('git_diff_extractor')
 
 
 def get_git_repo(repo_path: str) -> Repo:
-    """Initialize and return a git repository object."""
+    """Initialize and return a GitPython ``Repo`` object.
+
+    Args:
+        repo_path: Filesystem path to the Git repository.
+
+    Returns:
+        A ``git.Repo`` instance for the given path.
+
+    Raises:
+        ValueError: If the path does not exist or is not a Git repository.
+    """
     try:
         if not os.path.exists(repo_path):
             raise ValueError(f"Repository path does not exist: {repo_path}")
@@ -34,7 +44,15 @@ def get_git_repo(repo_path: str) -> Repo:
 
 
 def extract_commit_data(repo: Repo, max_commits: int = None) -> List[Dict[str, Any]]:
-    """Extract commit metadata and diffs from the repository."""
+    """Extract commit metadata and diffs from the repository.
+
+    Args:
+        repo: A ``git.Repo`` instance to extract from.
+        max_commits: Optional cap on the number of commits to process.
+
+    Returns:
+        List of dicts, each containing commit hash, author info, dates, message, and diff content.
+    """
 
     commits_data = []
 
@@ -114,13 +132,28 @@ def extract_commit_data(repo: Repo, max_commits: int = None) -> List[Dict[str, A
 
 
 def create_dataframe(commits_data: List[Dict[str, Any]]) -> pd.DataFrame:
-    """Create a pandas DataFrame from commit data."""
+    """Create a pandas DataFrame from a list of commit data dicts.
+
+    Args:
+        commits_data: List of dicts returned by :func:`extract_commit_data`.
+
+    Returns:
+        A pandas DataFrame with one row per commit.
+    """
     df = pd.DataFrame(commits_data)
     return df
 
 
 def save_dataframe(df: pd.DataFrame, output_file: str) -> None:
-    """Save the DataFrame to a CSV file."""
+    """Save the DataFrame to a CSV file on disk.
+
+    Args:
+        df: The pandas DataFrame to persist.
+        output_file: Filesystem path for the output CSV.
+
+    Raises:
+        Exception: If the file cannot be written.
+    """
     try:
         df.to_csv(output_file, index=False)
         log.info(f"Successfully saved DataFrame to {output_file}")
@@ -129,15 +162,17 @@ def save_dataframe(df: pd.DataFrame, output_file: str) -> None:
         raise
 
 
-def new_api(repo_path: str = None) -> Dict[str, Any]:
-    """
-    Main API function to extract git diffs from repository.
+def new_api(areq=None, repo_path: str = None) -> Dict[str, Any]:
+    """Main API function to extract git diffs from a repository.
+
+    Extracts commit metadata and diffs, builds a DataFrame, and saves it to CSV.
 
     Args:
-        areq: AgentReq instance containing configuration
+        areq: AgentReq instance containing configuration (repo_path, max_commits, output_file).
+        repo_path: Direct repo path override (ignored if ``areq`` provides one).
 
     Returns:
-        Dictionary with extraction results
+        Dictionary with keys: ``success``, ``message``, ``output_file``, ``commit_count``, ``df``.
     """
     if repo_path is None:
         repo_path = '/opt/ds/oats'
@@ -179,8 +214,12 @@ def new_api(repo_path: str = None) -> Dict[str, Any]:
         return {'success': False, 'message': error_msg}
 
 
-def setup_parser():
-    """Set up argument parser for CLI usage."""
+def setup_parser() -> argparse.ArgumentParser:
+    """Set up and return the CLI argument parser for the diff extractor.
+
+    Returns:
+        Configured ``argparse.ArgumentParser`` instance.
+    """
     parser = argparse.ArgumentParser(description='Git Commit Diff Extractor')
     parser.add_argument('-r', '--repo-path', default='/opt/ds/oats', help='Path to git repository (default: /opt/ds/oats)')
     parser.add_argument('-o', '--output-file', default=None, help='Output CSV file path')
@@ -190,8 +229,8 @@ def setup_parser():
     return parser
 
 
-def main():
-    """Main entry point for CLI usage."""
+def main() -> int:
+    """CLI entry point — parse args, run diff extraction, and return exit code."""
     parser = setup_parser()
     args = parser.parse_args()
 

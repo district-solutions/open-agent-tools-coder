@@ -1,22 +1,35 @@
 """
-Git co-author enforcement for coder.
+Git co-author enforcement for the coder agent.
 
-Ensures all git commits made by coder include a Co-Authored-By trailer
-to comply with AI-generated code attribution requirements (Linux Foundation stance).
+Ensures all ``git commit`` commands include a ``Co-Authored-By`` trailer
+so that AI-generated code is properly attributed, in line with the
+Linux Foundation's stance on AI contribution disclosure.
+
+Usage::
+
+    from oats.git.coauthor import ensure_coauthor_trailer
+    cmd = ensure_coauthor_trailer('git commit -m "fix bug"')
 """
 from __future__ import annotations
 
+import os
 import re
 
-CO_AUTHOR_LINE = os.getenv('CO_AUTHOR_COMMITS', "Co-Authored-By: coder <hello@districtsolutions.ai>"
+CO_AUTHOR_LINE = os.getenv('CO_AUTHOR_COMMITS', "Co-Authored-By: coder <hello@districtsolutions.ai>")
 
 
 def ensure_coauthor_trailer(command: str) -> str:
-    """
-    If *command* is a ``git commit`` invocation, ensure the commit message
-    includes the coder co-author trailer.
+    """Ensure a ``git commit`` command includes the coder co-author trailer.
 
-    Returns the (possibly modified) command string.
+    Inspects the command for a ``-m`` message flag (quoted or heredoc style)
+    and appends the ``Co-Authored-By`` trailer. Falls back to adding a
+    ``--trailer`` flag if the message format is unrecognized.
+
+    Args:
+        command: The full shell command string.
+
+    Returns:
+        The original or modified command string with the trailer included.
     """
     if not _is_git_commit(command):
         return command
@@ -65,7 +78,17 @@ def ensure_coauthor_trailer(command: str) -> str:
 
 
 def _is_git_commit(command: str) -> bool:
-    """Check if a shell command is a git commit invocation."""
+    """Check if a shell command is a ``git commit`` invocation.
+
+    Splits the command on shell separators (``;``, ``&``, ``|``) and checks
+    each segment for a ``git commit`` prefix.
+
+    Args:
+        command: The full shell command string to inspect.
+
+    Returns:
+        ``True`` if any segment begins with ``git commit``, else ``False``.
+    """
     for segment in re.split(r"[;&|]+", command):
         segment = segment.strip()
         if re.match(r"^git\s+commit\b", segment):

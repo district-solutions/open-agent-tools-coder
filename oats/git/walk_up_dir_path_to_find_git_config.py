@@ -12,11 +12,17 @@ from oats.log import cl
 log = cl("find_git_config")
 
 def walk_up_dir_path_to_find_git_config(dir_path: str) -> Tuple[bool, str]:
-    """Walk up from *dir_path* and return the first parent directory that
-    contains a ``.git/config`` file.
+    """Walk up the directory tree from *dir_path* to find the Git repository root.
+
+    Starting at the given directory, checks each ancestor for a ``.git/config``
+    file. Stops at the filesystem root if no Git repo is found.
+
+    Args:
+        dir_path: The directory to start the search from.
 
     Returns:
-        ``(True, repo_dir)`` on success, ``(False, "")`` on failure.
+        ``(True, repo_dir)`` with the absolute path to the repo root on success,
+        or ``(False, "")`` if no Git repository is found.
     """
     try:
         current = os.path.abspath(dir_path)
@@ -42,6 +48,7 @@ def walk_up_dir_path_to_find_git_config(dir_path: str) -> Tuple[bool, str]:
 
 
 def main() -> None:
+    """CLI entry point — walk up from the target directory and print the git repo root."""
     parser = argparse.ArgumentParser(description="Walk up the directory tree to find the git repo root.")
     parser.add_argument("-d", "--target_dir", default=".", help="Target directory to start walking up from (default: .)")
     args = parser.parse_args()

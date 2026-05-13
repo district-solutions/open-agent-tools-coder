@@ -15,15 +15,16 @@ from oats.log import cl
 log = cl('build_git_dataset')
 
 
-def build_git_diff_markdown(diff_index):
-    """
-    Convert a Git diff index to markdown format.
+def build_git_diff_markdown(diff_index) -> str:
+    """Convert a Git diff index to a markdown table.
+
+    The table has columns: File, Type (Added/Modified/Deleted/Renamed), and Changes.
 
     Args:
-        diff_index: Git diff index object
+        diff_index: A GitPython diff index (iterable of diff objects).
 
     Returns:
-        str: Markdown formatted diff content
+        A markdown-formatted table as a string, or empty string if no diffs.
     """
     if not diff_index:
         return ""
@@ -63,15 +64,14 @@ def build_git_diff_markdown(diff_index):
     return "\n".join(markdown_lines)
 
 
-def extract_commit_info(commit):
-    """
-    Extract commit information.
+def extract_commit_info(commit) -> dict:
+    """Extract basic metadata from a Git commit object.
 
     Args:
-        commit: Git commit object
+        commit: A GitPython commit object.
 
     Returns:
-        dict: Commit information
+        Dict with keys: ``commit_hash``, ``author``, ``email``, ``date``, ``message``.
     """
     return {
         "commit_hash": commit.hexsha,
@@ -83,14 +83,20 @@ def extract_commit_info(commit):
 
 
 def build_git_dataset(repo_path: str) -> pd.DataFrame:
-    """
-    Build a pandas DataFrame containing git commit diffs in markdown format.
+    """Build a pandas DataFrame containing git commit diffs in markdown format.
+
+    Iterates over all commits in the repository, extracts metadata, computes
+    diffs between consecutive commits, and formats each diff as a markdown table.
 
     Args:
-        repo_path: Path to the Git repository
+        repo_path: Path to the Git repository.
 
     Returns:
-        pd.DataFrame: DataFrame with commit information and markdown diffs
+        DataFrame with columns: ``commit_hash``, ``author``, ``email``, ``date``,
+        ``message``, ``git_diff_md``.
+
+    Raises:
+        Exception: If the repository cannot be opened or processed.
     """
     try:
         repo = Repo(repo_path)
@@ -131,10 +137,8 @@ def build_git_dataset(repo_path: str) -> pd.DataFrame:
         raise
 
 
-def main():
-    """
-    Main entry point for the script.
-    """
+def main() -> pd.DataFrame:
+    """CLI entry point — build the git dataset and optionally save to Parquet."""
     parser = argparse.ArgumentParser(description="Build a markdown dataset from Git repository commits")
     parser.add_argument('-r', "--repo-path", default="/opt/ds/oats", help="Path to the Git repository (default: /opt/ds/oats)")
     parser.add_argument('-o', "--output-file", help="Output file path for the pandas DataFrame (optional)")
@@ -164,15 +168,16 @@ def main():
 
 
 # High-level API function compatible with the specified signature
-def new_api(areq):
-    """
-    High-level API function for integrating with AgentReq.
+def new_api(areq) -> pd.DataFrame:
+    """High-level API function for integrating with AgentReq.
+
+    Delegates to :func:`build_git_dataset` using the repo path from the request.
 
     Args:
-        areq: AgentReq object containing configuration
+        areq: AgentReq object with a ``repo_path`` attribute (defaults to ``.``).
 
     Returns:
-        pd.DataFrame: DataFrame with git_diff_md column
+        DataFrame with commit information and markdown diffs.
     """
     # This would integrate with the AgentReq object as needed
     # For now, we'll use the default behavior

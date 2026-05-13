@@ -47,6 +47,13 @@ log = cl('git_search')
 
 
 class ActionType(str, Enum):
+    """Supported git sub-commands for commit search actions.
+
+    Members:
+        LOG:  Run ``git log`` with the configured filters.
+        SHOW: Run ``git show`` to inspect a specific commit.
+    """
+
     LOG = "log"
     SHOW = "show"
 
@@ -115,7 +122,11 @@ class GitCommitAction(BaseModel):
 
 
 class GitSearchPlan(BaseModel):
-    """Top-level wrapper for a git_actions JSON file."""
+    """Top-level wrapper for a git_actions JSON file.
+
+    Holds the repository path, an optional human-readable name, and an
+    ordered list of :class:`GitCommitAction` objects to execute.
+    """
 
     model_config = ConfigDict(extra="ignore", populate_by_name=True)
 

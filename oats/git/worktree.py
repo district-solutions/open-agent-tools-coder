@@ -24,6 +24,11 @@ class WorktreeManager:
     """
 
     def __init__(self, repo_dir: Path) -> None:
+        """Initialize the worktree manager for the given repository.
+
+        Args:
+            repo_dir: Path to the root of the Git repository.
+        """
         self._repo_dir = repo_dir
         self._worktrees_dir = repo_dir / ".coder-worktrees"
 

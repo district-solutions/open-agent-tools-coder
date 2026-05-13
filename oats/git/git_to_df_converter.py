@@ -16,15 +16,21 @@ from oats.log import cl
 log = cl("git_to_df")
 
 
-def extract_git_commits(repo_path):
-    """
-    Extract Git commit history from a repository and return as a pandas DataFrame.
+def extract_git_commits(repo_path: str) -> pd.DataFrame:
+    """Extract Git commit history from a repository and return as a pandas DataFrame.
+
+    Iterates over all commits in the repository, collecting SHA, author, date,
+    message, and parent hashes. Results are sorted by commit date in descending order.
 
     Args:
-        repo_path (str): Path to the Git repository
+        repo_path: Path to the Git repository.
 
     Returns:
-        pandas.DataFrame: DataFrame containing commit information sorted by date (desc)
+        DataFrame with columns: ``id``, ``author_name``, ``author_email``,
+        ``commit_date``, ``message``, ``parents``.
+
+    Raises:
+        Exception: If the repository cannot be opened or read.
     """
     try:
         # Open the repository
@@ -60,13 +66,17 @@ def extract_git_commits(repo_path):
         raise
 
 
-def save_dataframe_to_parquet(df, output_path):
-    """
-    Save DataFrame to Parquet file.
+def save_dataframe_to_parquet(df: pd.DataFrame, output_path: str) -> None:
+    """Save a pandas DataFrame to a Parquet file.
+
+    Creates parent directories as needed (unless the path is an S3 URI).
 
     Args:
-        df (pandas.DataFrame): DataFrame to save
-        output_path (str): Path to save the Parquet file
+        df: The DataFrame to persist.
+        output_path: Local filesystem path or S3 URI for the Parquet file.
+
+    Raises:
+        Exception: If the file cannot be written.
     """
     try:
         if 's3://' not in output_path:
@@ -81,10 +91,8 @@ def save_dataframe_to_parquet(df, output_path):
         raise
 
 
-def main():
-    """
-    Main function to parse arguments and run the Git to DataFrame converter.
-    """
+def main() -> None:
+    """CLI entry point — parse args, extract commits, and save to Parquet."""
     parser = argparse.ArgumentParser(description="Convert Git commit history to pandas DataFrame", prog="git-to-pandas")
 
     # Add short arguments

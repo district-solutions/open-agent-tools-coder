@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
 Simple script to convert a single Git repository to Parquet format.
-This script converts the /opt/ds/oats repository to Parquet format.
+
+Extracts all commits from the specified repository, builds a pandas DataFrame,
+and saves the result as a Parquet file. Defaults to ``/opt/ds/oats`` as the
+source repository and ``/tmp/repo-commits.pq`` as the output path.
 """
 
 import argparse
@@ -14,8 +17,12 @@ from oats.log import cl
 log = cl("convert-git-to-pq")
 
 
-def get_arg_vals():
-    """Main function to convert /opt/ds/oats repository to Parquet"""
+def get_arg_vals() -> argparse.Namespace:
+    """Parse and return CLI arguments for the repo-to-Parquet converter.
+
+    Returns:
+        Parsed namespace with ``repo_path`` and ``out_file`` attributes.
+    """
     parser = argparse.ArgumentParser(description="Convert Git repository to Parquet format")
     parser.add_argument(
         "-r",
@@ -33,8 +40,8 @@ def get_arg_vals():
     return args
 
 
-def main():
-    """Main function to convert a git repository to Parquet"""
+def main() -> None:
+    """CLI entry point — parse args and convert a Git repository to Parquet format."""
     # Define paths
     out_file = "/tmp/repo-commits.pq"
     repo_path = "/opt/ds/oats"
@@ -53,6 +60,18 @@ def main():
 
 
 def convert_repo_to_parquet(repo_path: str, out_file: str) -> pd.DataFrame | None:
+    """Convert a Git repository's commit history to a Parquet file.
+
+    Extracts all commits from the given repository, builds a pandas DataFrame,
+    and saves it to the specified Parquet output path.
+
+    Args:
+        repo_path: Path to the Git repository.
+        out_file: Path where the Parquet file will be written.
+
+    Returns:
+        The DataFrame of commits on success, or ``None`` on failure.
+    """
     log.info(f"Converting Git repository at '{repo_path}' to Parquet format...")
     log.info(f"Output will be saved to: {out_file}")
     df = None
