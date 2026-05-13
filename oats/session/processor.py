@@ -235,7 +235,7 @@ class SessionProcessor:
         self.local_tool_data = {}
         self.local_tool_impls = {}
 
-        self.tool_api_url = 'http://0.0.0.0:20700/v1'
+        self.tool_api_url = os.getenv('TOOL_API_URL', 'http://0.0.0.0:20700/v1')
         self.tool_api_key = os.getenv('TOOL_API_KEY', 'CHANGE_PASSWORD')
 
         # Initialize file state cache

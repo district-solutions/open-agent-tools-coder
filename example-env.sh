@@ -39,6 +39,7 @@ export LITELLM_LOCAL_MODEL_COST_MAP=True
 export COLORS_ENABLED=1
 export ENV_NAME=prod
 
+export TOOL_API_URL=http://0.0.0.0:20700/v1
 export TOOL_API_KEY=CHANGE_PASSWORD
 
 export VLLM_PROVIDER_ID=vllm-small

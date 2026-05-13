@@ -1,0 +1,8 @@
+prune .venv
+prune venv
+prune node_modules
+prune build
+prune dist
+prune .git
+prune .ai
+global-exclude *.pyc __pycache__/*
