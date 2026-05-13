@@ -6,7 +6,9 @@ Open Agent Tools (oats) enables small-to-large self-hosted ai models to use loca
 
 - Supports running local self-hosted models that can run 1-250+ local tool-calling commands using an agentic coding ai.
 
-- Supports over ``141,000`` tools using the [open-agent-tools prompt indices repo](https://github.com/district-solutions/open-agent-tools). Requires cloning the repo(s) locally for the tool-calling to function.
+- Supports over **141,000** tools using the [open-agent-tools prompt indices repo](https://github.com/district-solutions/open-agent-tools). Requires cloning the repo(s) locally for the tool-calling to function.
+
+- [Find more OATs Prompt Indices Datasets on HuggingFace](https://huggingface.co/datasets/open-agent-tools/open-tools)
 
 ## Install
 
