@@ -1,0 +1,7 @@
+{
+    "find_python_files": "find all Python files matching a glob pattern in the project directory",
+    "find_files_recursively": "find all TypeScript files recursively using a double star glob pattern",
+    "list_files_in_subdir": "list all JavaScript files under a specific subdirectory using glob",
+    "resolve_path_relative": "resolve a file path relative to the tool context working directory",
+    "get_tool_parameters": "get the parameter schema for the glob tool including pattern and path"
+}

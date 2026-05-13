@@ -1,0 +1,7 @@
+{
+    "build_system_prompt": "build a system prompt with git status, memories, and tool guidance for an autonomous coding session",
+    "get_git_status": "get the current git branch, uncommitted changes, and recent commits for a working directory",
+    "get_memory_section": "load persistent memories from the project directory for inclusion in the system prompt",
+    "get_tool_guidance": "get the count of deferred tools available via tool_search for the system prompt",
+    "review_base_prompt": "review the base prompt that defines agent role, behavior, tool use, and communication guidelines"
+}

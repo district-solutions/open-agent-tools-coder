@@ -1,0 +1,7 @@
+{
+    "build_index": "build an MCP index by fetching OpenAPI specs from all configured servers and persisting to disk",
+    "search_mcp_index": "search the MCP index with a BM25 query and return the top ranked matching entries",
+    "classify_mcp_query": "classify a natural language query to the single best matching MCP tool resource",
+    "load_mcp_index": "load the persisted MCP index from disk and return it if not stale or missing",
+    "get_or_build_mcp_index": "get the MCP index from disk or build it fresh if the index is missing or stale"
+}

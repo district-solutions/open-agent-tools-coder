@@ -1,0 +1,7 @@
+{
+    "ask_user_with_options": "ask the user a simple yes no question with predefined options and a default choice",
+    "ask_user_free_text": "ask the user an open ended question that accepts free text response with a default value",
+    "question_tool_multi_select": "ask the user up to four questions with multiple selection options and labeled choices",
+    "question_tool_single_choice": "ask the user a single question with numbered options and descriptions for each choice",
+    "question_tool_gather_preferences": "ask the user to clarify ambiguous instructions by presenting implementation choices and gathering preferences"
+}

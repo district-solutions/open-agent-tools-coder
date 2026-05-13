@@ -1,0 +1,7 @@
+{
+    "create_task_list": "create a todo list with tasks marked as pending for a new session",
+    "update_task_status": "update the status of a todo item from pending to in_progress or completed",
+    "read_current_todos": "read the current todo list and display all tasks with their status icons",
+    "clear_todo_list": "clear all todos by passing an empty list to reset the session task tracker",
+    "track_task_progress": "track task progress by showing completed count and currently in progress items"
+}

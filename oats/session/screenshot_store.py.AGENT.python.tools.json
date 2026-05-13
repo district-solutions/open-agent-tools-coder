@@ -1,0 +1,7 @@
+{
+  "save_screenshot": "save raw image bytes as a timestamped screenshot file for a given session ID",
+  "save_screenshot_from_file": "copy an existing image file into the session screenshot store with an optional label",
+  "list_screenshots": "list all screenshot files for a session sorted newest first by modification time",
+  "delete_session_screenshots": "delete all screenshots for a session and return the count of files removed",
+  "encode_image": "encode an image file as a base64 dict with media type for the vision pipeline"
+}

@@ -1,0 +1,7 @@
+{
+    "spawn_general_sub_agent": "spawn a general sub-agent to autonomously complete a complex multi-step task with full tool access",
+    "launch_explore_sub_agent": "launch an explore sub-agent to read-only investigate the codebase and report findings without modifying files",
+    "run_plan_sub_agent": "run a plan sub-agent to design an implementation approach and return a detailed step-by-step plan",
+    "spawn_background_sub_agent": "spawn a sub-agent in the background and check its status later using the returned agent_id",
+    "check_background_agent_status": "check the status and results of a background sub-agent using its agent_id"
+}

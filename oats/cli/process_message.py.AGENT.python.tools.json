@@ -1,0 +1,7 @@
+{
+    "process_message_stream": "process a user message through the session processor and stream LLM output to the console",
+    "process_message_with_tools": "process a message with auto-approve tool calls and display tool execution results in real time",
+    "process_message_with_images": "process a message with attached images and stream the assistant response with token usage stats",
+    "process_message_compaction": "process a message that triggers context compaction when the conversation exceeds token limits",
+    "process_message_error_handling": "process a message and handle errors, warnings, and keyboard interrupts gracefully with status tracking"
+}

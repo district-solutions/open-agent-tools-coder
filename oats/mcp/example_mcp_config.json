@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "servers": {
+    "litellm": {
+      "name": "litellm",
+      "description": "LiteLLM proxy for multi-provider LLM access and MCP tool management",
+      "transport": "http",
+      "url": "https://litellm-api.up.railway.app",
+      "tags": [
+        "llm",
+        "chat",
+        "completions",
+        "mcp"
+      ],
+      "enabled": true,
+      "max_concurrent": 10,
+      "timeout_seconds": 30
+    },
+    "local-server": {
+      "name": "local-server",
+      "description": "Local MCP server running via command",
+      "transport": "stdio",
+      "command": "python",
+      "args": [
+        "/path/to/local/mcp/server.py"
+      ],
+      "env": {
+        "ENV": "development"
+      },
+      "headers": {
+        "Authorization": "Bearer secret-token"
+      },
+      "tags": [
+        "local",
+        "development"
+      ],
+      "enabled": true,
+      "max_concurrent": 5,
+      "timeout_seconds": 60
+    },
+    "remote-http": {
+      "name": "remote-http",
+      "description": "Remote HTTP-based MCP server",
+      "transport": "streamable-http",
+      "url": "https://api.example.com/mcp",
+      "headers": {
+        "X-API-Key": "your-api-key-here"
+      },
+      "tags": [
+        "remote",
+        "production"
+      ],
+      "enabled": true,
+      "max_concurrent": 15,
+      "timeout_seconds": 45
+    }
+  }
+}

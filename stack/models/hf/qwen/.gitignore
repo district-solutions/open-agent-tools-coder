@@ -1,0 +1,5 @@
+*.safetensors
+*.bin
+*.pth
+Qwen3.6-27B-AWQ-INT4
+Qwen3.6-35B-A3B-AWQ-4bit

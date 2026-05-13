@@ -1,0 +1,19 @@
+served_model_name: chat:latest
+# max qwen3-coder context based on training
+# max_model_len: 262144
+# max nvidia 5090
+# max_model_len: 59000 - 63000
+# max out the 6000 rtx
+max_model_len: 262100
+# max_model_len: 81920
+# max_model_len: 230000
+gpu_memory_utilization: 0.6
+model: /models
+host: 0.0.0.0
+port: 8000
+# api_key: CHANGE_PASSWORD
+api_key: 0p3n-w3bu!
+uvicorn-log-level: debug
+kv_cache_dtype: fp8_e4m3
+enforce_eager: true
+# root-path: /

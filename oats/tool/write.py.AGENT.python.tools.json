@@ -1,0 +1,7 @@
+{
+    "create_file_with_content": "create a new file at a given path with the specified content string",
+    "overwrite_existing_file": "overwrite an existing file with new content and create parent directories as needed",
+    "resolve_file_path": "resolve a relative or absolute file path against the tool context working directory",
+    "check_write_permission": "check and return a permission prompt message for writing to a specified file path",
+    "sync_lsp_diagnostics": "sync the written file content with the LSP server and collect any diagnostics"
+}

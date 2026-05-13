@@ -1,0 +1,7 @@
+{
+  "require_network_gate": "gate an outbound network call by calling require_network with a label and url before making the request",
+  "is_local_url_check": "check if a URL targets localhost, a LAN host, or a private IP range using is_local_url",
+  "offline_strict_toggle": "check whether CODER_OFFLINE_STRICT is enabled by calling offline_strict to toggle strict mode at runtime",
+  "OfflineBlockedError_handle": "handle OfflineBlockedError exceptions raised when strict offline mode refuses an external network request",
+  "review_offline_helpers": "review the offline module to understand how require_network gates external calls when CODER_OFFLINE_STRICT is set"
+}

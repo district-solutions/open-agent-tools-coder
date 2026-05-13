@@ -1,0 +1,7 @@
+{
+    "check_deferred_tools": "check if deferred tool loading is enabled via the CODER_FEATURE_DEFERRED_TOOLS environment variable",
+    "check_reactive_compaction": "check if reactive compaction for prompt-too-long recovery is enabled via the CODER_FEATURE_REACTIVE_COMPACTION env var",
+    "check_trajectory_store": "check if the on-disk trajectory store for logging user prompts and tool outcomes is enabled",
+    "check_plugins": "check if the declarative plugin loader is enabled via the CODER_FEATURE_PLUGINS environment variable",
+    "check_streaming_disabled": "check if streaming should be disabled for a given model ID or via the CODER_FEATURE_NON_STREAMING env var"
+}

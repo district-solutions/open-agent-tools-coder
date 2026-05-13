@@ -1,0 +1,7 @@
+{
+    "init_session": "create a new MCP tracking session and write the session header to a markdown log file",
+    "record_call": "append a tool call record with arguments, result, and latency to the session log file",
+    "update_ranking": "write the current tool ranking index as a markdown table to a session ranking file",
+    "write_session_summary": "append a session summary table with success rate, latency, and call counts to the log",
+    "write_global_stats": "write cross-session tool performance statistics as a markdown table to the global stats file"
+}

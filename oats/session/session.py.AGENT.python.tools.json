@@ -1,0 +1,7 @@
+{
+  "create_session": "create a new AI conversation session with a project directory and optional model and provider IDs",
+  "get_session": "get an existing session by its ID from the session storage",
+  "list_sessions": "list all session infos from the session storage",
+  "create_user_message": "create and add a user message with text content and optional images to a session",
+  "get_messages_for_llm": "get all session messages formatted as dicts ready for an LLM API call"
+}

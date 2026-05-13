@@ -1,0 +1,7 @@
+{
+    "create_LocalTool": "create a LocalTool instance and set its name, description, parameters, and implementation callable",
+    "run_LocalTool_execute": "run the LocalTool execute method with args and a ToolContext to get a ToolResult",
+    "load_tools_from_repo_uses_index": "load tools from a source index file matched against a prompt and wrap them as LocalTool instances",
+    "run_tool_call": "run an LLM tool-calling loop using LiteLLM with dynamically loaded tool implementations and a user prompt",
+    "run_main_cli": "run the CLI to load tools from a repo index by prompt and execute the first matched tool"
+}

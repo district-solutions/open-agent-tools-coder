@@ -1,0 +1,7 @@
+{
+    "get_third_friday_dates": "generate the third Friday dates for the next 6 months in YYYYMMDD format",
+    "utc": "get the current UTC datetime as a timezone-aware datetime object",
+    "naive": "get the current UTC datetime as a timezone-naive datetime object",
+    "get_utc_str": "get the current UTC datetime formatted as a YYYY-MM-DD HH:MM:SS string",
+    "review_date_module": "review the date module functions for UTC and naive datetime utilities"
+}

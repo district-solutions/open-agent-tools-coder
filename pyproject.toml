@@ -1,0 +1,86 @@
+[project]
+name = "oats"
+version = "1.0.0"
+description = "Open Agent Tools (oats) enables small-to-large self-hosted ai models to use local source code when running tool-calling agentic workloads. We actively data mine 20,800+ (2+ TB) popular github repos using large and small ai models to create reuseable: json, markdown and parquet files for local-first tool-calling models. How does it work? Over multiple passes, we compile and export a fast, compressed prompt index for all python source code in any repo. Agents refer to the local prompt index to use already-written source code on disk instead of http with mcp or having an expensive frontier ai model re-build something that is already working locally with expensive tokens. We use oats to free up large model tokens usage by delegating the local tool-calling to smaller, open source ai models. With oats you can run local self-hosted models that call 1-250+ tool-calling commands on our local host with many oats prompt indices."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "jayjohnson", email = 'jay.p.h.johnson@gmail.com'},
+]
+keywords = ["ai", "tool-calling", "coding", "assistant", "llm", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development",
+]
+dependencies = [
+    "aiofiles",
+    "autopep8",
+    "black",
+    "fastapi",
+    "fastparquet",
+    "litellm==1.83.14",
+    "prompt_toolkit",
+    "pydantic",
+    "pydantic-settings",
+    "rank_bm25",
+    "rich",
+    "sse-starlette",
+    "ujson",
+]
+
+[project.optional-dependencies]
+browser = [
+    "playwright>=1.40.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=24.0.0",
+]
+
+[project.scripts]
+ff = "oats.cli.interactive:main"
+get-tools = "oats.agent_get_tool_choices_for_prompt:main"
+pv = "oats.cli.check_providers:check_providers"
+
+[project.urls]
+Homepage = "https://openagent.tools/"
+Documentation = "https://openagent.tools/"
+Repository = "https://github.com/district-solutions/open-agent-tools-coder"
+
+[tool.hatch.build.targets.wheel]
+packages = ["oats"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

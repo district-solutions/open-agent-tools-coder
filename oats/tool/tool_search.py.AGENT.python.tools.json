@@ -1,0 +1,7 @@
+{
+    "search_tool_catalog": "search the tool catalog for tools matching a natural language query like deploy docker app",
+    "select_exact_tools": "use select:tool_name syntax to load exact tool schemas by name from the catalog",
+    "execute_tool_search": "execute a tool search query with a max results limit to find matching tool schemas",
+    "review_match_tools_scoring": "review the ToolSearchTool _match_tools method to understand the token overlap and keyword scoring algorithm",
+    "summarize_tokenize_function": "summarize the _tokenize function that extracts lowercase alphanumeric tokens from text using regex"
+}

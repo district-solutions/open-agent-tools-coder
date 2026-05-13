@@ -1,0 +1,7 @@
+{
+    "record_turn": "record a trajectory turn with session id, role, kind, and content to the SQLite store",
+    "arecord_turn_async": "async record a trajectory turn to the store without blocking the event loop",
+    "search_turns_bm25": "search past trajectory turns by query text using BM25 ranking and optional filters",
+    "get_session_turns": "get all turns for a given session id ordered by turn index from the store",
+    "get_trajectory_store": "get the process-wide trajectory store singleton creating it on first use with an optional db path"
+}

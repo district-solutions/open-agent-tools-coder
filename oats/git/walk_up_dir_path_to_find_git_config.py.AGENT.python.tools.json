@@ -1,0 +1,7 @@
+{
+    "walk_up_dir_path_to_find_git_config": "walk up the directory tree from a given path to find the first parent directory containing a .git/config file",
+    "run_find_git_config_cli": "run the CLI tool with a target directory argument to find and print the git repo root path",
+    "test_walk_up_dir_path_to_find_git_config": "test the walk_up_dir_path_to_find_git_config function with a directory path and verify it returns a tuple of success boolean and repo path",
+    "review_walk_up_dir_path_to_find_git_config": "review the walk_up_dir_path_to_find_git_config function to understand how it walks up the directory tree checking for .git/config",
+    "refactor_walk_up_dir_path_to_find_git_config": "refactor the walk_up_dir_path_to_find_git_config function to support additional git detection strategies beyond .git/config"
+}

@@ -1,0 +1,7 @@
+{
+    "create_logger_instance": "create a logger Lg instance with a custom name and optional color support",
+    "log_messages_with_levels": "log messages at different levels like info, debug, warning, error, and critical",
+    "save_logs_to_file": "save collected log messages to a file with optional append mode and length limits",
+    "log_markdown_headers": "log markdown header strings that get rendered with rich Markdown formatting and colored level tags",
+    "get_logger_logs": "retrieve the list of all logged messages from the logger instance"
+}

@@ -1,0 +1,7 @@
+{
+    "fetch_url_content": "fetch content from a URL and convert HTML to plain text for easier processing",
+    "fetch_api_response": "fetch an API response from a URL and return the raw text content with metadata",
+    "retrieve_documentation": "retrieve documentation from a URL and extract relevant information using an optional prompt",
+    "convert_html_to_text": "convert HTML content to plain text with markdown formatting for headers, links, and code blocks",
+    "execute_webfetch_tool": "execute the WebFetchTool with a URL and optional prompt to fetch and process web content"
+}

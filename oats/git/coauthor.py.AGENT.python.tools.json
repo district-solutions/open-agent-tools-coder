@@ -1,0 +1,7 @@
+{
+    "ensure_coauthor_trailer": "ensure a git commit command includes a Co-Authored-By trailer in the commit message",
+    "check_is_git_commit": "check if a shell command string is a git commit invocation",
+    "handle_m_flag_commits": "handle git commit commands that use the -m flag with quoted commit messages",
+    "handle_heredoc_commits": "handle git commit commands that use heredoc style for multi-line commit messages",
+    "fallback_trailer_flag": "append a --trailer flag to git commit commands as a fallback for git 2.32+"
+}

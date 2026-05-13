@@ -1,0 +1,7 @@
+{
+    "load_all_memories": "load all memories from user and project directories into a list of Memory objects",
+    "save_memory": "save a Memory object to the project or user directory as a markdown file",
+    "delete_memory": "delete a memory by its ID from the user or project memory directory",
+    "search_memories": "search across all memories by keyword and return results sorted by relevance score",
+    "build_system_prompt_section": "build a truncated memory section string for inclusion in an LLM system prompt"
+}

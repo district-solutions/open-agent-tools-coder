@@ -1,0 +1,7 @@
+{
+    "generate_readme_in_directory": "generate README.md files with module overviews for all subdirectories in a given path",
+    "extract_module_docstring": "extract the module-level docstring from a Python file using AST parsing",
+    "get_module_info": "get the name, docstring, and relative path for a Python module file",
+    "analyze_directory_modules": "analyze a directory and return information about all Python modules it contains",
+    "register_generate_readme_tool": "register the GenerateREADMETool with the tool registry for use in the opencode platform"
+}

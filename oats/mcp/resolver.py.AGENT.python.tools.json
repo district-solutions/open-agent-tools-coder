@@ -1,0 +1,7 @@
+{
+  "classify_error": "classify an error message or status code into transient, server, or client error categories",
+  "circuit_breaker_can_call": "check if a server circuit is closed or half-open to allow a tool call",
+  "circuit_breaker_record_failure": "record a tool call failure and open the circuit if the failure threshold is exceeded",
+  "backoff_strategy_should_retry": "determine whether to retry a failed tool call based on error category and attempt count",
+  "tool_resolver_resolve": "find BM25-ranked alternative tools when a stuck tool call needs a fallback"
+}

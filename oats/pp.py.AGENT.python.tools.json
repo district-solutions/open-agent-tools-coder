@@ -1,0 +1,7 @@
+{
+    "pp_dict": "use pp to pretty print a Python dictionary as indented JSON",
+    "pp_list": "use pp to pretty print a Python list as indented JSON",
+    "pp_any": "use pp to pretty print any Python object as indented JSON",
+    "pp_none": "use pp with no arguments to return an empty JSON object",
+    "pp_escape_slashes": "use pp to pretty print JSON with forward slashes unescaped"
+}

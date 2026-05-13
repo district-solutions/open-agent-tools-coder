@@ -1,0 +1,7 @@
+{
+    "determine_best_tools": "find the best tool matches from a uses schema using BM25, TF-IDF, or embeddings",
+    "rank_with_bm25": "rank corpus documents against a query using the BM25Okapi algorithm",
+    "rank_with_tfidf": "rank corpus documents against a query using TF-IDF vectorization and cosine similarity",
+    "rank_with_embeddings": "rank corpus documents against a query using sentence transformer embeddings and cosine similarity",
+    "rerank": "rerank retrieval results using a cross-encoder model for improved semantic accuracy"
+}

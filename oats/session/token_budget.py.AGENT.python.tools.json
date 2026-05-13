@@ -1,0 +1,7 @@
+{
+  "create_SessionTokenBudget": "create a SessionTokenBudget instance with a given context window size and output token reserves",
+  "call_snapshot": "call snapshot on a SessionTokenBudget to estimate input tokens and get recommended output budget",
+  "call_estimate_tokens": "call _estimate_tokens on a SessionTokenBudget to get a heuristic token count from a message list",
+  "call_format_budget_guidance": "call format_budget_guidance to produce a compact prompt string describing current context pressure",
+  "review_BudgetSnapshot": "review a BudgetSnapshot dataclass to inspect estimated input tokens, remaining tokens, and pressure level"
+}

@@ -1,0 +1,7 @@
+{
+    "build_git_dataset": "build a pandas DataFrame from a Git repository with commit diffs in markdown format",
+    "build_git_diff_markdown": "build a markdown table from a Git diff index showing file changes and types",
+    "extract_commit_info": "extract commit hash, author, email, date, and message from a Git commit object",
+    "run_git_dataset_cli": "run the CLI tool to build a Git dataset and optionally save it as a parquet file",
+    "new_api_agentreq": "build a Git dataset DataFrame from an AgentReq object with a configurable repo path"
+}

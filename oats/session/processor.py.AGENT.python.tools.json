@@ -1,0 +1,7 @@
+{
+    "process_message": "process a user message through the LLM agent loop with streaming responses and concurrent tool execution",
+    "execute_tool": "execute a tool with permission checks, approval callbacks, and hook integration for a given session",
+    "build_messages": "build the message list for an LLM call including system prompt, MCP context, and todo reminders",
+    "parse_tool_args": "parse tool call argument JSON with a repair fallback that strips residual model special tokens",
+    "patch_orphan_tool_calls": "patch orphan tool calls on a message by inserting synthetic results for interrupted tool dispatches"
+}

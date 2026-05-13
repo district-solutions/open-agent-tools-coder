@@ -1,0 +1,7 @@
+{
+    "get_profile": "get the active feature profile from the CODER_PROFILE environment variable or default to standard",
+    "is_feature_enabled": "check if a feature group like browser or web_tools is enabled with env override support",
+    "describe_profile": "describe all feature groups and their enabled status for a named profile or the active one",
+    "list_profiles": "list all built-in profile names like minimal standard and full available in the system",
+    "reset_profile": "reset the cached feature profile to force re-resolution from environment variables on next call"
+}

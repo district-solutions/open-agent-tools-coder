@@ -1,0 +1,7 @@
+{
+    "run_git_to_parquet": "run the git to parquet converter with a repo path and output file path",
+    "extract_git_commits": "extract git commit history from a repository and return as a pandas DataFrame sorted by date",
+    "save_dataframe_to_parquet": "save a pandas DataFrame to a Parquet file at the specified output path",
+    "review_extract_git_commits": "review the extract_git_commits function to understand how it extracts commit data from a Git repository",
+    "refactor_save_dataframe_to_parquet": "refactor the save_dataframe_to_parquet function to support additional output formats like CSV or JSON"
+}

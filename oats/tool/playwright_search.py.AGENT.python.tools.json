@@ -1,0 +1,7 @@
+{
+    "run_playwright_search": "run a headless Chromium browser search on Bing or DuckDuckGo and return results with titles and URLs",
+    "create_playwright_search_tool": "create a PlaywrightSearchTool instance registered in the tool registry for keyless web search",
+    "execute_playwright_search_tool": "execute the PlaywrightSearchTool with a query string and optional num_results parameter to get markdown results",
+    "review_JS_BING_RESULTS": "review the JavaScript selector string that extracts search result titles, URLs, and snippets from Bing pages",
+    "refactor_JS_DDG_RESULTS": "refactor the JavaScript selector string that extracts search results from DuckDuckGo HTML fallback pages"
+}

@@ -1,0 +1,7 @@
+{
+    "get_provider": "get a configured AI provider by ID or use the default provider from config",
+    "Provider_complete": "send a completion request to an LLM provider with retry logic and exponential backoff",
+    "Provider_stream": "stream a completion from an LLM provider yielding chunks as they arrive",
+    "parse_tool_calls_from_text": "parse tool calls embedded in text content from open-source models like Qwen or Hermes",
+    "list_providers": "list all available AI providers registered in the provider registry"
+}

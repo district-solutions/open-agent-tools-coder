@@ -1,0 +1,7 @@
+{
+    "create_file_cache": "create a FileStateCache instance to track files read and written during a session",
+    "mark_read_file": "mark a file as read by calling mark_read with its path and optional content",
+    "mark_written_file": "mark a file as written by calling mark_written with its path to invalidate the read cache",
+    "check_file_freshness": "check if a cached file is unchanged since last read by calling is_fresh with its path",
+    "get_session_summary": "get a session file activity summary with files read and written counts using get_summary"
+}

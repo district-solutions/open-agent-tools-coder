@@ -1,0 +1,33 @@
+services:
+  vllmqwen3635b:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-large-context-chat
+    restart: unless-stopped
+    ports:
+    - "20773:8000"
+    volumes:
+    - ../../models/hf/qwen/Qwen3.6-35B-A3B-AWQ-4bit:/models
+    - ./config-qwen36-35b-awq4.yaml:/config/model.yaml
+    entrypoint:
+    - /usr/bin/bash
+    - -c
+    - |
+      #!/usr/bin/env bash -e
+      echo "checking config:"
+      ls -lrth /config/
+      cat /config/model.yaml
+      echo "checking model path:"
+      ls -lrth /models
+      echo "starting"
+      vllm serve --config /config/model.yaml --enable-auto-tool-choice --tool-call-parser qwen3_xml --reasoning-parser qwen3 --default-chat-template-kwargs '{"enable_thinking": false}'
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [gpu]
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/v1/models"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5

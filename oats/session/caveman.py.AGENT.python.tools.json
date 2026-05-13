@@ -1,0 +1,7 @@
+{
+    "compress_text_caveman_style": "compress long text into terse caveman style using an LLM provider while preserving code fences and paths",
+    "create_compression_result": "create a CompressionResult dataclass to track original chars, compressed chars, and reduction ratio",
+    "validate_compression_invariants": "validate that compressed text preserved all URLs, code fences, and file paths from the original",
+    "extract_invariants_from_text": "extract file paths, URLs, and code fences from text as structural invariants for compression validation",
+    "review_compression_reduction": "review the reduction property on CompressionResult to calculate the percentage of tokens saved by compression"
+}

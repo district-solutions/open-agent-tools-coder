@@ -1,0 +1,7 @@
+{
+    "create_storage_item": "create a new item in the Storage class by id and Pydantic model data",
+    "read_storage_item": "read an item from the Storage class by its unique id",
+    "upsert_storage_item": "upsert an item in the Storage class creating or updating by id",
+    "delete_storage_item": "delete an item from the Storage class by its unique id",
+    "set_keyvalue": "set a key-value pair in the KeyValueStorage class for arbitrary JSON data"
+}

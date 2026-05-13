@@ -1,0 +1,7 @@
+{
+    "create_message_with_text": "create a Message with role user and add text content using add_text",
+    "add_image_to_message": "add an image part to a Message using base64 data or a URL",
+    "add_tool_call_to_message": "add a tool call part to an assistant Message with a tool name and arguments",
+    "add_tool_result_to_message": "add a tool result part to a Message with output and optional error",
+    "convert_message_to_llm_format": "convert a Message to LLM API format using to_llm_format for user assistant or system roles"
+}

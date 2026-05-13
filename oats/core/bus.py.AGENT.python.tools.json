@@ -1,0 +1,7 @@
+{
+    "subscribe_to_event_type": "subscribe to a specific EventType on the EventBus with an async handler function",
+    "subscribe_to_all_events": "subscribe to all events on the EventBus with a single catch-all handler",
+    "publish_event_async": "publish an Event to the EventBus asynchronously notifying all subscribed handlers",
+    "publish_event_sync": "publish an Event to the EventBus synchronously from a non-async context",
+    "subscribe_once_to_event": "subscribe to a single occurrence of an EventType that auto-unsubscribes after firing"
+}

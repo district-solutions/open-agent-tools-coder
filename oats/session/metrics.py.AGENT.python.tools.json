@@ -1,0 +1,7 @@
+{
+    "incr_counter": "increment a named telemetry counter by one or more for feature usage tracking",
+    "get_counter": "get the current value of a named telemetry counter by its key string",
+    "snapshot_counters": "take a snapshot of all telemetry counters and session uptime in seconds",
+    "reset_counters": "reset all telemetry counters to zero for use in test fixtures",
+    "review_metrics_module": "review the in-memory per-session counters module for feature telemetry and thread safety"
+}

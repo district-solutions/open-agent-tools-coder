@@ -1,0 +1,7 @@
+{
+    "enter_planning_mode": "enter planning mode to create an implementation plan before making code changes",
+    "exit_planning_mode": "exit planning mode and request user approval for the completed implementation plan",
+    "check_plan_status": "check the current planning mode status and view the active plan file details",
+    "check_is_planning_mode": "check if a given session is currently active in planning mode",
+    "get_plan_state": "get the full planning state dictionary for a given session ID"
+}

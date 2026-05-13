@@ -1,0 +1,7 @@
+{
+    "read_file_contents": "read the contents of a file with line numbers and optional offset and limit parameters",
+    "read_file_with_offset": "read a file starting from a specific line number using the offset parameter",
+    "read_file_with_limit": "read a limited number of lines from a file using the limit parameter",
+    "check_file_read_permission": "check if reading a file outside the project directory requires permission",
+    "resolve_file_path": "resolve a relative or absolute file path against the tool context working directory"
+}

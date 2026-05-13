@@ -1,0 +1,7 @@
+{
+    "load_mcp_config": "load MCP server configuration from project, user, or env var path with automatic API key resolution",
+    "save_mcp_config": "save an MCPServersFile config object to a JSON file at the given path",
+    "add_server_to_config": "add a new MCP server entry to the project config file and persist it to disk",
+    "create_default_mcp_config": "create a default mcp_servers.json config file with a litellm example server in the project directory",
+    "resolve_env_vars_in_headers": "resolve Bearer MCP_SERVER_API_KEY placeholders in server headers by replacing them with actual environment variable values"
+}

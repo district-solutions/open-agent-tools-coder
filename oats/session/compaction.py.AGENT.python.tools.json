@@ -1,0 +1,7 @@
+{
+    "compact_conversation_messages": "compact older conversation messages into a summary to prevent context window overflow",
+    "check_compaction_needed": "check if the current message list has exceeded the token threshold requiring compaction",
+    "extract_state_capsule": "extract a deterministic state capsule from a batch of conversation messages including file events and tool usage",
+    "render_state_capsule": "render a state capsule dictionary into a continuation-friendly text block for the LLM",
+    "estimate_message_tokens": "estimate the total token count across a list of messages including text tool calls and tool results"
+}

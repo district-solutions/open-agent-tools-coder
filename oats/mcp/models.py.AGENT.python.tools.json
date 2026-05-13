@@ -1,0 +1,7 @@
+{
+    "create_MCPServerConfig": "create an MCP server config with name, transport type, URL, and rate limiting settings",
+    "convert_MCPToolDefinition_to_litellm_format": "convert an MCP tool definition to LiteLLM OpenAI function calling format for LLM consumption",
+    "track_ToolCallRecord": "track a tool call record with status updates, error categorization, and idempotency key computation",
+    "query_RankingIndex_for_query": "query the tool ranking index to find top-k tools relevant to a natural language query",
+    "manage_OrchestrationSession": "manage an orchestration session by adding call records and checking wall-clock timeout status"
+}

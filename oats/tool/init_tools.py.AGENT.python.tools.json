@@ -1,0 +1,7 @@
+{
+    "init_tools": "initialize and register all default tools for an AI agent based on the active feature profile",
+    "register_tool": "register a new tool instance into the global tool registry for use by the agent",
+    "list_tools": "list all currently registered tools in the tool registry",
+    "get_tool": "get a specific tool by name from the tool registry",
+    "is_feature_enabled": "check whether a named feature group is enabled in the current profile configuration"
+}

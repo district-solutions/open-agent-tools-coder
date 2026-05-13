@@ -1,0 +1,3 @@
+{
+    "get_oat_config": "get the singleton OatConfig instance that holds repo uses index and data settings"
+}

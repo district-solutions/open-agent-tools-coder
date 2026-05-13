@@ -1,0 +1,7 @@
+{
+    "run_check_providers": "run the check_providers function to list all available providers and their configuration status",
+    "check_providers_cli": "run the check_providers CLI module to display provider names, IDs, and whether each is configured",
+    "review_check_providers": "review the check_providers function that iterates over providers and prints their configuration status",
+    "summarize_check_providers": "summarize the check_providers function which uses rich.console to print provider configuration details",
+    "test_check_providers": "test the check_providers function to verify it correctly lists providers and handles misconfigured CODER_CONFIG_FILE"
+}

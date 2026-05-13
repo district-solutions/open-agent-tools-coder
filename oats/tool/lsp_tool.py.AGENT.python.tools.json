@@ -1,0 +1,7 @@
+{
+    "find_definition": "find the definition of a symbol at a given line and column in a source file",
+    "find_references": "find all references to a symbol at a given cursor position in a source file",
+    "hover_symbol": "get hover information for a symbol at a given line and column in a source file",
+    "get_diagnostics": "get compiler and linter diagnostics for a source file using the language server",
+    "list_document_symbols": "list all symbols in a source file with their kinds and line numbers"
+}

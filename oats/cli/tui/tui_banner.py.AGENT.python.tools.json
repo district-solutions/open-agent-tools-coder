@@ -1,0 +1,7 @@
+{
+    "detect_git_info": "detect git repo info including branch name, repo name, and dirty status for a directory",
+    "shorten_model_id": "shorten a model ID string by stripping the provider prefix before the slash",
+    "print_startup_banner": "print a startup banner showing coder version, model, provider, working directory, and git branch",
+    "print_session_info": "print session details including session ID, title, message count, turns, tokens, and model info",
+    "print_token_cost": "print session token usage statistics including total tokens, context window size, and utilization percentage"
+}

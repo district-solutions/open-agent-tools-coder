@@ -1,0 +1,7 @@
+{
+    "set_mode": "set the interaction mode to auto, plan, edit, or caveman for the current session",
+    "get_mode": "get the current interaction mode for the session processor",
+    "mode_guidance": "get the system prompt guidance text for a given interaction mode",
+    "approval_for": "get the approval posture mapped to a specific interaction mode",
+    "describe": "get a human-readable description of an interaction mode"
+}

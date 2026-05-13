@@ -1,0 +1,7 @@
+{
+    "read_all_memories": "list all persistent memories using the MemoryReadTool with no query",
+    "search_memories_by_keyword": "search persistent memories by keyword using the MemoryReadTool query parameter",
+    "filter_memories_by_type": "filter memories by type such as user feedback project or reference",
+    "write_new_memory": "save a new persistent memory with title content type tags and scope",
+    "delete_memory_by_id": "delete a persistent memory by its ID using the MemoryDeleteTool"
+}

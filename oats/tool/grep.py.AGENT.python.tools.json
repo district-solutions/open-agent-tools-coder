@@ -1,0 +1,7 @@
+{
+    "search_pattern_in_files": "search for a regex pattern across all files in a directory using ripgrep or python fallback",
+    "find_files_by_type": "find all Python files matching a regex pattern in the project root directory",
+    "search_with_context": "search for a string with up to 5 context lines around each match in content mode",
+    "case_insensitive_search": "perform a case insensitive regex search across TypeScript files in a given path",
+    "count_matches": "count the number of regex matches per file without showing full content output"
+}

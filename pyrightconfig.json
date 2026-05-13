@@ -1,0 +1,16 @@
+{
+  "exclude": [],
+  "reportMissingTypeStubs": "none",
+  "reportUnusedExpression": "none",
+  "reportUnusedVariable": "none",
+  "reportUnknownVariableType": "none",
+  "reportGeneralTypeIssues": "none",
+  "reportAssignmentType": "none",
+  "reportArgumentType": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportCallIssue": "none",
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
+  "disableTaggedHints": true
+}

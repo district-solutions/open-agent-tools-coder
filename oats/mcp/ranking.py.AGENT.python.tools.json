@@ -1,0 +1,7 @@
+{
+    "build_ToolRanker_index": "build a ToolRanker index from a list of MCP tool definitions with reliability and latency scores",
+    "rank_ToolRanker_for_query": "rank MCP tools for a query using BM25 relevance, inertia, reliability, and latency scores",
+    "record_ToolRanker_call": "record a completed tool call to update stats and the inertia transition graph",
+    "compute_ToolRanker_inertia": "compute the inertia score for a tool based on sequential usage patterns from the last used tool",
+    "review_ToolRanker_scoring": "review the ToolRanker composite scoring weights for relevance, reliability, latency, and inertia dimensions"
+}

@@ -1,0 +1,34 @@
+services:
+  vllm-tool-functiongemma1:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-tool-functiongemma-1
+    restart: unless-stopped
+    ports:
+    - "20700:8000"
+    volumes:
+    - ../../models/hf/google/functiongemma-270m-it:/models
+    - ./config-functiongemma.yaml:/config/model.yaml
+    entrypoint:
+    - /usr/bin/bash
+    - -c
+    - |
+      #!/usr/bin/env bash -e
+      echo "checking config:"
+      ls -lrth /config/
+      cat /config/model.yaml
+      echo "checking model path:"
+      ls -lrth /models
+      echo "starting"
+      vllm serve --config /config/model.yaml --enable-auto-tool-choice --tool-call-parser functiongemma
+      sleep infinity
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [gpu]
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/v1/models"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5

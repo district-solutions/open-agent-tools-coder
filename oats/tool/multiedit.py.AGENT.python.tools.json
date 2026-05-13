@@ -1,0 +1,7 @@
+{
+    "apply_multiple_edits_to_file": "apply multiple text replacements to a single file in one atomic operation",
+    "replace_all_occurrences_in_file": "replace all occurrences of a string across a file using the replace_all flag",
+    "resolve_relative_file_path": "resolve a relative file path against the tool context working directory",
+    "check_edit_permission": "check and request permission before applying edits to a specified file",
+    "validate_edit_parameters": "validate that file_path and edits array are provided before executing multi-edit"
+}

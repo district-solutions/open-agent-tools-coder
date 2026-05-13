@@ -1,0 +1,7 @@
+{
+    "install_trajectory_logger": "install the trajectory logger to register global hooks for recording user prompts and tool results",
+    "reset_for_tests": "reset the trajectory logger state and clear per-session turn counters for testing",
+    "review_on_user_prompt": "review the async hook handler that records user prompts into the trajectory store",
+    "review_on_tool_result": "review the async hook handler that records tool results with args and output into the store",
+    "review_next_turn": "review the thread-safe turn index generator that backfills from the SQLite trajectory store"
+}

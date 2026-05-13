@@ -1,0 +1,7 @@
+{
+    "retrieve_examples": "retrieve past trajectory examples similar to a user prompt from the trajectory store",
+    "format_examples_section": "format a list of retrieved examples into a markdown section for the system prompt",
+    "Example_format": "format a single retrieval-augmented example into a plain text string with content capping",
+    "Example_class": "create an Example dataclass instance with a score, prompt record, and continuation records",
+    "retrieve_examples_exclude_session": "retrieve trajectory examples while excluding the current session to avoid stale results"
+}

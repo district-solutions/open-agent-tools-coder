@@ -1,0 +1,7 @@
+{
+    "get_usage_stats": "get aggregated usage statistics across all sessions including total prompts tokens and session counts",
+    "UsageStats_to_dict": "convert a UsageStats object to a dictionary for display with session totals and token breakdowns",
+    "format_tokens": "format a token count integer into a human-readable string with K M or B suffixes",
+    "format_usage_summary": "format a UsageStats object into a human-readable summary string with sessions prompts and tokens",
+    "SessionUsageEntry": "create a per-session usage entry dataclass with session id title tokens and message count"
+}

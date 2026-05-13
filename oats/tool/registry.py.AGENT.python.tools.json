@@ -1,0 +1,7 @@
+{
+    "create_tool_context": "create a ToolContext with session_id, project_dir, and working_dir for tool execution",
+    "create_tool_result": "create a ToolResult with title, output, and optional metadata and error fields",
+    "build_custom_tool": "build a custom tool by subclassing Tool and implementing name, description, parameters, and execute",
+    "register_tool": "register a tool instance in the global registry using register_tool",
+    "list_tools": "list all registered tools in the global registry using list_tools"
+}

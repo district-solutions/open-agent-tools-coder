@@ -1,0 +1,7 @@
+{
+    "get_tool_choices_for_prompt": "get tool choices for a prompt using the OAT index with multi-tool resolution",
+    "get_prompt_choices": "get prompt choices from the OAT config using the get_prompt_choices method",
+    "get_best_matches_bm25": "get the best BM25 matches for a prompt when prompt choices are unavailable",
+    "run_agent_get_tool_choices_cli": "run the CLI tool to get prompt choices from the OAT index with a prompt argument",
+    "parse_args": "parse command line arguments for the OAT prompt choices CLI including prompt top-k and verbose"
+}

@@ -1,0 +1,7 @@
+{
+    "init_mcp_registry": "initialize the MCP server registry singleton and discover all tools from registered servers",
+    "discover_all": "discover tools from all registered MCP servers concurrently and build the route table",
+    "search_tools": "search available MCP tools by query string across name, description, and tags",
+    "get_tools_for_litellm": "export registered MCP tools in LiteLLM-compatible format for function calling",
+    "health_check": "check the health of a specific registered MCP server by probing its endpoints"
+}

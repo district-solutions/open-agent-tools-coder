@@ -1,0 +1,7 @@
+{
+    "discover_mcp_tools": "discover available tools across all connected MCP servers with optional keyword search and server filtering",
+    "call_mcp_tool": "call a specific tool on a connected MCP server using qualified name format server.tool",
+    "chain_mcp_tool_calls": "execute a sequential chain of MCP tool calls where each call builds on previous results",
+    "fan_out_mcp_calls": "execute multiple MCP tool calls concurrently for parallel data gathering across independent sources",
+    "rank_mcp_tools": "rank available MCP tools by relevance to a task description using BM25 and reliability scores"
+}

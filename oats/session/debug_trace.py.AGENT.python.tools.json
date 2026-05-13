@@ -1,0 +1,7 @@
+{
+  "check_trace_enabled": "check if debug tracing is enabled by reading the CODER_FEATURE_DEBUG_TRACE environment variable",
+  "get_trace_directory": "get the debug trace output directory path from the CODER_DEBUG_TRACE_DIR environment variable",
+  "write_trace_event": "write a JSONL trace event for a session to the debug trace directory when tracing is enabled",
+  "enable_debug_tracing": "enable debug tracing by setting the CODER_FEATURE_DEBUG_TRACE environment variable to 1",
+  "inspect_trace_output": "inspect JSONL trace files in the trace directory to review session events and tool selection"
+}

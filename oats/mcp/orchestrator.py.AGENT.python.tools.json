@@ -1,0 +1,7 @@
+{
+    "call_tool": "execute a tool call with retry, circuit breaker, and stuck resolution across MCP servers",
+    "call_tool_chain": "execute a sequential chain of tool calls stopping on unrecoverable client errors",
+    "fan_out": "execute multiple tool calls concurrently with a configurable concurrency limit across MCP servers",
+    "rank_tools_for_task": "rank available MCP tools by relevance, reliability, and inertia for a given task description",
+    "get_session_summary": "get a summary of an orchestration session including success rate, errors, and circuit states"
+}

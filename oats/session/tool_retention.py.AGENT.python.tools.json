@@ -1,0 +1,7 @@
+{
+    "retain_tool_result": "compress a tool result for session retention by keeping head and tail lines and omitting the middle",
+    "compress_read_output": "compress read tool output by retaining the first 120 and last 40 lines for session history",
+    "compress_grep_output": "compress grep tool output by retaining the first 80 and last 20 lines for session history",
+    "compress_bash_output": "compress bash tool output by retaining head and tail lines with extra tail when an error is present",
+    "compress_generic": "compress any tool output by keeping a configurable number of head and tail lines and inserting an omission marker"
+}

@@ -1,0 +1,7 @@
+{
+    "run_git_phrase_search": "run a case-insensitive phrase search across git commit history in a repository",
+    "replay_git_actions_from_json": "replay a predefined set of git log and show actions loaded from a JSON file",
+    "build_phrase_actions": "build git log actions with case-insensitive grep for a list of search phrases",
+    "execute_git_commit_action": "execute a single git log or show action against a repository and return results",
+    "load_search_plan": "load and validate a git search plan from a JSON file with log and show actions"
+}

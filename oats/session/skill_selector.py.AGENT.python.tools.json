@@ -1,0 +1,7 @@
+{
+    "select_skills_for_prompt": "select the top matching skills from the catalog using BM25 scoring against a user input string",
+    "format_skill_section": "format a list of SkillMatch objects into a markdown section ready for system prompt injection",
+    "SkillMatch": "create a frozen SkillMatch dataclass instance with a skill name, command, summary, prompt, and BM25 score",
+    "reset_cache": "reset the cached BM25 index so the next call reloads skills from disk",
+    "select_skills_for_prompt_top_k": "select up to five matching skills from the catalog by passing top_k equal to five"
+}

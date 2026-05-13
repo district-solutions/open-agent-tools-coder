@@ -1,0 +1,7 @@
+{
+    "extract_git_diffs": "extract git diffs from a repository and save commit metadata to a CSV file",
+    "run_git_diff_extractor_cli": "run the git diff extractor CLI tool to extract diffs from a git repository",
+    "extract_commit_data": "extract commit metadata and diffs from a git repository into a list of dictionaries",
+    "create_dataframe_from_commits": "create a pandas DataFrame from a list of commit data dictionaries",
+    "get_git_repo": "initialize and return a git repository object from a given repository path"
+}

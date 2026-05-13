@@ -1,0 +1,7 @@
+{
+    "fetch_tools": "fetch tools from a running Playwright MCP HTTP server and return the raw tool list",
+    "tools_to_openapi": "convert a list of MCP tool definitions into an OpenAPI 3.0 JSON specification",
+    "main": "run the CLI to fetch MCP tools from a server URL and emit an OpenAPI JSON spec",
+    "parse_sse_body": "parse an SSE-formatted response body and extract the first JSON payload from data lines",
+    "decode_response": "decode an MCP HTTP response handling both JSON and SSE content types"
+}

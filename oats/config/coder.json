@@ -1,0 +1,27 @@
+{
+  "provider": {
+    "vllm-small": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "vllm-small",
+      "base_url": "http://0.0.0.0:20773/v1",
+      "api_key": "CHANGE_PASSWORD",
+      "models": [
+        {
+          "name": "hosted_vllm/chat:latest",
+          "maxTokens": 262100
+        }
+      ]
+    },
+    "t1": {
+      "name": "t1",
+      "npm": "@ai-sdk/openai-compatible",
+      "base_url": "http://0.0.0.0:20700/v1",
+      "api_key": "CHANGE_PASSWORD",
+      "models": [
+        {
+          "name": "openai/google/functiongemma-270m-it"
+        }
+      ]
+    }
+  }
+}

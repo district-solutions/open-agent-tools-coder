@@ -1,0 +1,7 @@
+{
+    "run_interactive_REPL": "run the interactive coding assistant REPL with a local AI model in any project directory",
+    "resume_session_last": "resume the last interactive coding session with the -r last flag to continue previous work",
+    "switch_model_runtime": "switch to a different AI model at runtime using the /switch slash command in the REPL",
+    "compact_conversation_history": "compact the conversation history to reduce context length using the /compact slash command",
+    "browse_url_interactive": "browse a URL interactively with Playwright using the /browse -i slash command in the REPL"
+}

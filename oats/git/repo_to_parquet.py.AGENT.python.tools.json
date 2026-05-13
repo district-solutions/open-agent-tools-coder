@@ -1,0 +1,7 @@
+{
+    "run_repo_to_parquet": "run the python module to convert a git repository to parquet format with custom repo path",
+    "run_convert_repo_to_parquet": "run the convert_repo_to_parquet function to extract git commits and save to parquet file",
+    "run_get_arg_vals": "run the get_arg_vals function to parse command line arguments for repo path and output file",
+    "review_convert_repo_to_parquet": "review the convert_repo_to_parquet function that extracts git commits and saves to parquet",
+    "refactor_main": "refactor the main function to handle git repository to parquet conversion with argparse"
+}

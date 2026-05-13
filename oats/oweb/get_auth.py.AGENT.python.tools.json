@@ -1,0 +1,7 @@
+{
+    "get_auth_credentials": "get auth credentials as a tuple of url, email, and password from environment variables",
+    "get_auth_with_params": "get auth credentials by passing url, email, and password directly to get_auth_env",
+    "get_auth_verbose": "get auth credentials with verbose logging enabled to see auth type details",
+    "review_get_auth_env": "review the get_auth_env function to understand how it resolves url protocols and env variables",
+    "refactor_get_auth_env": "refactor get_auth_env to support additional environment variable names beyond CODER_CHAT_URL"
+}

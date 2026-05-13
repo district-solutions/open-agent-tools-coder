@@ -1,0 +1,7 @@
+{
+    "create_OatPromptChoices": "create an OatPromptChoices model to store matched actions prompts and source file results",
+    "create_OatConfig": "create an OatConfig instance that loads and indexes a repo uses JSON file",
+    "get_prompt_choices": "get prompt choices by matching a user prompt prefix against indexed repo actions",
+    "get_best_matches_bm25": "get the best matching actions for a prompt using BM25Okapi scoring and top-k retrieval",
+    "review_OatConfig_get_prompt_choices": "review the OatConfig get_prompt_choices method to understand prefix matching and tool result scoring"
+}

@@ -1,0 +1,198 @@
+"""
+MultiEdit tool for applying multiple edits to a file in sequence.
+"""
+
+from __future__ import annotations
+
+import aiofiles
+from pathlib import Path
+from typing import Any
+
+from oats.tool.registry import Tool, ToolContext, ToolResult
+from oats.log import cl
+
+log = cl("tool.multiedit")
+
+
+class MultiEditTool(Tool):
+    """Apply multiple edits to a single file in sequence."""
+
+    @property
+    def name(self) -> str:
+        return "multiedit"
+
+    @property
+    def description(self) -> str:
+        return """Apply multiple edits to a single file in sequence.
+
+Use this when you need to make several changes to the same file.
+Each edit is applied in order, so later edits see the results of earlier ones.
+
+This is more efficient than multiple separate edit calls and ensures
+all edits are applied atomically."""
+
+    @property
+    def parameters(self) -> dict[str, Any]:
+        return {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Path to the file to edit",
+                },
+                "edits": {
+                    "type": "array",
+                    "description": "List of edits to apply in order",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "old_string": {
+                                "type": "string",
+                                "description": "Text to find and replace",
+                            },
+                            "new_string": {
+                                "type": "string",
+                                "description": "Text to replace with",
+                            },
+                            "replace_all": {
+                                "type": "boolean",
+                                "description": "Replace all occurrences (default: false)",
+                                "default": False,
+                            },
+                        },
+                        "required": ["old_string", "new_string"],
+                    },
+                },
+            },
+            "required": ["file_path", "edits"],
+        }
+
+    def requires_permission(self, args: dict[str, Any], ctx: ToolContext) -> str | None:
+        """MultiEdit requires permission."""
+        file_path = args.get("file_path", "")
+        num_edits = len(args.get("edits", []))
+        return f"Apply {num_edits} edits to: {file_path}"
+
+    def _resolve_path(self, file_path: str, ctx: ToolContext) -> Path:
+        """Resolve a file path relative to the context."""
+        path = Path(file_path)
+        if not path.is_absolute():
+            path = ctx.working_dir / path
+        return path.resolve()
+
+    async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        file_path = args.get("file_path", "")
+        edits = args.get("edits", [])
+
+        if not file_path:
+            return ToolResult(
+                title="MultiEdit",
+                output="",
+                error="No file path provided",
+            )
+
+        if not edits:
+            return ToolResult(
+                title="MultiEdit",
+                output="",
+                error="No edits provided",
+            )
+
+        try:
+            path = self._resolve_path(file_path, ctx)
+
+            if not path.exists():
+                return ToolResult(
+                    title="MultiEdit",
+                    output="",
+                    error=f"File not found: {path}",
+                )
+
+            # Read the file
+            async with aiofiles.open(path, "r", encoding="utf-8") as f:
+                content = await f.read()
+
+            original_content = content
+            results = []
+            total_replacements = 0
+
+            # Apply each edit in sequence
+            for i, edit in enumerate(edits):
+                old_string = edit.get("old_string", "")
+                new_string = edit.get("new_string", "")
+                replace_all = edit.get("replace_all", False)
+
+                if not old_string:
+                    results.append(f"Edit {i+1}: Skipped - no old_string")
+                    continue
+
+                if old_string == new_string:
+                    results.append(f"Edit {i+1}: Skipped - old_string equals new_string")
+                    continue
+
+                # Check if old_string exists
+                if old_string not in content:
+                    results.append(f"Edit {i+1}: NOT FOUND - '{old_string[:50]}...'")
+                    continue
+
+                # Count occurrences
+                occurrences = content.count(old_string)
+
+                # Check uniqueness if not replacing all
+                if not replace_all and occurrences > 1:
+                    results.append(
+                        f"Edit {i+1}: AMBIGUOUS - '{old_string[:30]}...' appears {occurrences} times"
+                    )
+                    continue
+
+                # Apply the edit
+                if replace_all:
+                    content = content.replace(old_string, new_string)
+                    replacements = occurrences
+                else:
+                    content = content.replace(old_string, new_string, 1)
+                    replacements = 1
+
+                total_replacements += replacements
+                results.append(f"Edit {i+1}: OK - {replacements} replacement(s)")
+
+            # Only write if changes were made
+            if content != original_content:
+                async with aiofiles.open(path, "w", encoding="utf-8") as f:
+                    await f.write(content)
+
+            # Format output
+            output_lines = [f"MultiEdit: {path.name}", ""]
+            output_lines.extend(results)
+            output_lines.append("")
+            output_lines.append(f"Total: {total_replacements} replacements across {len(edits)} edits")
+
+            return ToolResult(
+                title=f"MultiEdit: {path.name}",
+                output="\n".join(output_lines),
+                metadata={
+                    "file_path": str(path),
+                    "num_edits": len(edits),
+                    "total_replacements": total_replacements,
+                    "results": results,
+                },
+            )
+
+        except UnicodeDecodeError:
+            return ToolResult(
+                title="MultiEdit",
+                output="",
+                error=f"Cannot edit binary file: {file_path}",
+            )
+        except PermissionError:
+            return ToolResult(
+                title="MultiEdit",
+                output="",
+                error=f"Permission denied: {file_path}",
+            )
+        except Exception as e:
+            return ToolResult(
+                title="MultiEdit",
+                output="",
+                error=f"Error editing file: {e}",
+            )

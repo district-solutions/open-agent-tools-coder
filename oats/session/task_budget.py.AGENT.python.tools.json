@@ -1,0 +1,7 @@
+{
+    "create_SessionTaskBudget": "create a SessionTaskBudget instance to track tool call limits and iteration budgets for an agent loop",
+    "record_tool_call": "record a tool call with its name and arguments to the SessionTaskBudget history for budget tracking",
+    "snapshot": "get a TaskBudgetSnapshot showing current pressure level, tool call count, and whether the agent should stop",
+    "commit": "commit the SessionTaskBudget to switch from discovery mode to commit mode with extended safety limits",
+    "review_TaskBudgetSnapshot": "review a TaskBudgetSnapshot dataclass to inspect iteration count, pressure level, and guidance for the agent"
+}

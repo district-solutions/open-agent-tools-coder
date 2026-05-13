@@ -1,0 +1,7 @@
+{
+    "run_trajectory_report": "run a 7-day self-improvement trajectory report in markdown format",
+    "run_trajectory_report_custom_window": "run a self-improvement trajectory report for a custom number of days",
+    "run_trajectory_report_json": "run a self-improvement trajectory report and output raw JSON instead of markdown",
+    "review_main_function": "review the main function that parses --since and --json args for the trajectory report CLI",
+    "summarize_report_module": "summarize the trajectory report CLI module that delegates to metrics.report and format_report_markdown"
+}

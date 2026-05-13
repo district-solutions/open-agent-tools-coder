@@ -1,0 +1,7 @@
+{
+    "execute_websearch": "execute a web search query using the WebSearchTool with SerpAPI, Brave, Tavily, or DuckDuckGo backends",
+    "search_serpapi": "search the web using SerpAPI by calling _search_serpapi with a query string and API key",
+    "search_brave": "search the web using Brave Search API by calling _search_brave with a query and subscription token",
+    "search_tavily": "search the web using Tavily API by calling _search_tavily with a query and API key",
+    "format_results": "format search results into a ToolResult with numbered titles, URLs, and snippets"
+}

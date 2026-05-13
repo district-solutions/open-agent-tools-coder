@@ -1,0 +1,7 @@
+{
+    "apply_patch_tool": "apply a unified diff patch to one or more files in the working directory",
+    "parse_patch": "parse a unified diff format string into FilePatch objects with hunks",
+    "apply_hunks": "apply parsed patch hunks to original file content lines in reverse order",
+    "create_new_file_from_patch": "create a new file from patch content when the old path is /dev/null",
+    "delete_file_from_patch": "delete a file from the filesystem when the new path is /dev/null in the patch"
+}

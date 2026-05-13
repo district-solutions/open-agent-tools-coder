@@ -1,0 +1,7 @@
+{
+    "login_to_openwebui": "login to the Open WebUI API with email and password to get an auth token",
+    "login_with_env_vars": "login to Open WebUI using CODER_CHAT_URL, CODER_CHAT_EMAIL, and CODER_CHAT_PASSWORD environment variables",
+    "login_with_custom_url": "login to Open WebUI by passing a custom base_url instead of relying on environment variables",
+    "login_verbose_mode": "login to Open WebUI with verbose logging enabled to see the signin request details",
+    "review_login_error_handling": "review the login_to_openwebui function error handling for bad request and network failures"
+}

@@ -1,0 +1,7 @@
+{
+  "count_tokens_text": "estimate the token count of a string using tiktoken cl100k_base or a chars over 3.5 fallback",
+  "count_message_tokens_list": "sum the estimated token count across a list of session message objects including tool calls and results",
+  "get_encoder_lazy": "lazily load and memoize the tiktoken cl100k_base encoder for reuse across token counting calls",
+  "count_tokens_disable_tiktoken": "count tokens with the chars over 3.5 fallback when the CODER_DISABLE_TIKTOKEN environment variable is set to 1",
+  "count_message_tokens_tool_calls": "estimate tokens for message tool call arguments and tool result outputs and errors in a message list"
+}

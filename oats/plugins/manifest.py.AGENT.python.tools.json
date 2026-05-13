@@ -1,0 +1,7 @@
+{
+  "discover_plugin_manifests": "discover all plugin manifests from default or custom root directories",
+  "validate_plugin_manifest": "validate a plugin manifest JSON file and return a PluginManifest model",
+  "check_model_support": "check if a PluginManifest matches a given model id using matches_model",
+  "create_plugin_provides": "create a PluginProvides model declaring toolsets, tools, hooks, and slash commands",
+  "get_default_plugin_roots": "get the default plugin discovery root paths for user, project, and builtin plugins"
+}

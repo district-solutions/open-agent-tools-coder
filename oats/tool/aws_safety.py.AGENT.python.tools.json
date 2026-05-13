@@ -1,0 +1,7 @@
+{
+    "classify_aws_command": "classify an aws cli command as read, mutate, auth, or unknown risk level",
+    "redact_aws_secrets": "redact aws access keys, secret keys, and session tokens from command output text",
+    "review_AwsRisk_enum": "review the AwsRisk enum that defines read, mutate, auth, and unknown risk categories",
+    "review_AwsCommandInfo_dataclass": "review the AwsCommandInfo dataclass that holds aws command classification results including service and operation",
+    "summarize_aws_safety_module": "summarize the aws_safety module that classifies aws commands and redacts credentials from output"
+}

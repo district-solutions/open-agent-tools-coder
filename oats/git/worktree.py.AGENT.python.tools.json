@@ -1,0 +1,7 @@
+{
+    "create_worktree": "create an isolated git worktree for a sub-agent to modify files without affecting the main branch",
+    "cleanup_worktree": "remove a git worktree and its branch after the sub-agent finishes work with no uncommitted changes",
+    "has_changes_worktree": "check if a git worktree has uncommitted changes before cleaning up or merging",
+    "list_worktrees": "list all managed git worktree directories under the repo's .coder-worktrees folder",
+    "merge_back_worktree": "merge changes from a sub-agent worktree branch back into the main repository branch"
+}

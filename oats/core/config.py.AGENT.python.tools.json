@@ -1,0 +1,7 @@
+{
+    "load_config_from_file": "load a Config instance from a coder.json file and environment variables using Config.load()",
+    "get_global_config": "get the global singleton Config instance with get_config() and optionally reload or set a project directory",
+    "get_data_directory": "get or create the oats data directory at ~/.local/share/oats using get_data_dir()",
+    "configure_ai_provider": "define an AI provider with ProviderConfig including api_key, base_url, and enabled fields",
+    "configure_model_selection": "set the active model and provider with ModelConfig using provider_id and model_id fields"
+}

@@ -1,0 +1,5 @@
+{
+    "create_SelectedToolsManifest": "create a SelectedToolsManifest instance to track core, MCP, and local tool selections during a session",
+    "review_SelectedToolsManifest": "review the SelectedToolsManifest model to understand tool categorization fields for core, MCP, and local tools",
+    "summarize_SelectedToolsManifest": "summarize the SelectedToolsManifest Pydantic model fields used for tracking tool discovery and selection state"
+}

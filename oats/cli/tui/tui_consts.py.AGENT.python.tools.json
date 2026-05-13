@@ -1,0 +1,7 @@
+{
+    "format_tokens": "format a token count integer into a human-readable string like 1.2k or 12.3k",
+    "short_model": "shorten a model ID string by stripping the prefix before the last slash",
+    "detect_image_protocol": "detect the best chafa image output format for the current terminal emulator",
+    "review_TOOL_ICONS": "review the TOOL_ICONS dictionary mapping tool names to their display emoji icons",
+    "review_SYM_CONSTANTS": "review the symbol constants like SYM_OK SYM_ERR and SYM_WARN used in the TUI"
+}

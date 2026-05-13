@@ -1,0 +1,7 @@
+{
+    "create_approval_manager": "create an ApprovalManager instance in AUTO mode to auto-approve all tool operations",
+    "check_needs_approval": "check if a tool operation needs user approval using the ApprovalManager needs_approval method",
+    "prompt_approval": "prompt the user to approve a tool operation with yes, yes-all, no, or no-with-instructions options",
+    "set_approval_mode": "set the approval mode to SUPERVISED to ask before each write or bash operation",
+    "auto_approve_tool": "auto-approve a specific tool type for the current session using the ApprovalManager"
+}

@@ -1,0 +1,7 @@
+{
+    "select_tools_for_prompt": "select the most relevant tools for a user prompt using BM25 index and keyword detection",
+    "build_mcp_system_context": "build a compact MCP context string for the system prompt with the best matching resource",
+    "enrich_mcp_tool_description": "enrich an MCP tool description with routing info including function name and endpoint",
+    "get_coder_tool_index": "get the file path to the coder tool uses index from the environment variable",
+    "keyword_relevance": "score a tool relevance to a user prompt using keyword and alias matching"
+}

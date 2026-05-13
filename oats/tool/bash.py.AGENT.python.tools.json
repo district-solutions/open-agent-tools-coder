@@ -1,0 +1,7 @@
+{
+    "run_bash_command": "run a bash command in the shell with a specified timeout and working directory",
+    "execute_shell_command": "execute a shell command asynchronously and capture stdout and stderr output",
+    "run_command_with_timeout": "run a bash command that kills the process if it exceeds the timeout limit",
+    "run_command_in_directory": "run a bash command in a specific working directory path",
+    "truncate_command_output": "truncate command output if it exceeds the maximum line or byte limits"
+}

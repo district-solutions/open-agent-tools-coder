@@ -1,0 +1,7 @@
+{
+    "run_load_tools": "load public functions from python files into OpenAI tool schemas and callable implementations",
+    "run_run_tool_call": "run a tool call loop that sends a prompt to an LLM and executes returned tool calls",
+    "run_get_best_tools_for_prompt": "determine the best tool source files for a prompt using BM25 retrieval and OAT",
+    "run_run_tool_for_prompt": "determine best tools for a prompt, load them, and execute the full tool call loop",
+    "run_main_cli": "run the FunctionGemma CLI to dynamically load tool files and execute tool calls for a prompt"
+}
