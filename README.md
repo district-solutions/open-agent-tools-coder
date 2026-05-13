@@ -26,7 +26,7 @@ pip install -e .
 ```
 
 ```
-# litellm installs a older aiohttp version, upgrade this to the new version and ignore the warning
+# litellm installs an older aiohttp version, upgrade this to the new version and ignore the warning
 pip install --upgrade aiohttp
 ```
 
