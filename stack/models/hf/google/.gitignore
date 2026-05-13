@@ -1,0 +1,4 @@
+functiongemma-270m-it
+*.safetensors
+*.bin
+*.pth
