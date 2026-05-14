@@ -298,7 +298,7 @@ Hello! How can I help you today?
 
 ## Local AI - Use a Chat Model and a Tool-Calling Model to Run Local Source Code
 
-This will run source code on the ``t1`` tool-calling vLLM ai model.
+This will run source code on the ``t1`` tool-calling vLLM-hosted ai model (``functiongemma-270m-it`` by default).
 
 ```
 coder [edit]❯ get third friday
