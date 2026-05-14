@@ -49,11 +49,17 @@ Use the following sections:
 
 
 class ConversationCompactor:
-    """
-    Detects context limit approaching and compacts older messages.
+    """Detects context limit approaching and compacts older messages.
 
     Uses the LLM itself to generate a summary of older messages,
-    then replaces them with a single summary message.
+    then replaces them with a single summary message. Supports both
+    simple summarization and rich context-capsule mode with deterministic
+    state extraction.
+
+    Attributes:
+        _max_tokens: The model's context window size in tokens.
+        _provider_id: Provider ID for the summarization call.
+        _model_id: Model ID for the summarization call.
     """
 
     def __init__(
@@ -62,12 +68,26 @@ class ConversationCompactor:
         provider_id: str | None = None,
         model_id: str | None = None,
     ) -> None:
+        """Initialize the compactor.
+
+        Args:
+            model_context_length: The model's context window in tokens.
+            provider_id: Provider ID for summarization calls.
+            model_id: Model ID for summarization calls.
+        """
         self._max_tokens = model_context_length
         self._provider_id = provider_id
         self._model_id = model_id
 
     def should_compact(self, messages: list[Message]) -> bool:
-        """Check if compaction is needed based on estimated token count."""
+        """Check if compaction is needed based on estimated token count.
+
+        Args:
+            messages: The current conversation messages.
+
+        Returns:
+            True if the estimated token count exceeds the compaction threshold.
+        """
         if len(messages) <= PRESERVE_RECENT_MESSAGES:
             return False
         estimated = self._estimate_tokens(messages)
@@ -95,10 +115,18 @@ class ConversationCompactor:
         messages: list[Message],
         session_id: str,
     ) -> list[Message]:
-        """
-        Compact older messages into a summary.
+        """Compact older messages into a summary.
 
-        Returns a new message list with older messages replaced by a summary.
+        Splits messages into older (to summarize) and recent (to preserve).
+        Generates an LLM summary of the older messages and replaces them
+        with a single summary message.
+
+        Args:
+            messages: The full conversation message list.
+            session_id: The session ID for the summary message.
+
+        Returns:
+            A new message list with older messages replaced by a summary.
         """
         if len(messages) <= PRESERVE_RECENT_MESSAGES:
             return messages
@@ -148,7 +176,17 @@ class ConversationCompactor:
         return result
 
     async def _summarize(self, messages: list[Message]) -> str:
-        """Use the LLM to summarize a batch of messages."""
+        """Use the LLM to summarize a batch of messages.
+
+        Extracts a deterministic state capsule from tool activity, then
+        asks the LLM to produce a continuation-grade summary.
+
+        Args:
+            messages: The messages to summarize.
+
+        Returns:
+            The summary text.
+        """
         state_capsule = self._extract_state_capsule(messages)
         rendered_capsule = self._render_state_capsule(state_capsule)
 

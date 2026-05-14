@@ -1,6 +1,6 @@
 # Open Agent Tools Coder
 
-Open Agent Tools (oats) enables small-to-large self-hosted ai models to use local source code when running tool-calling agentic workloads. We actively data mine 20,800+ (2+ TB) popular github repos using large and small ai models to create reuseable: json, markdown and parquet files for local-first tool-calling models. How does it work? Over multiple passes, we compile and export a fast, compressed prompt index for all python source code in any repo. Agents refer to the local prompt index to use already-written source code on disk instead of http with mcp or having an expensive frontier ai model re-build something that is already working locally with expensive tokens. We use oats to free up large model tokens usage by delegating the local tool-calling to smaller, open source ai models.
+Open Agent Tools (oats) enables small-to-large self-hosted ai models to use local source code when running tool-calling agentic workloads. We actively data mine 20,970+ (2+ TB) popular github repos using large and small ai models to create reuseable: json, markdown and parquet files for local-first tool-calling models. How does it work? Over multiple passes, we compile and export a fast, compressed prompt index for all python source code in any repo. Agents refer to the local prompt index to use already-written source code on disk instead of http with mcp or having an expensive frontier ai model re-build something that is already working locally with expensive tokens. We use oats to free up large model tokens usage by delegating the local tool-calling to smaller, open source ai models.
 
 ![Open Agent Tools (oats) - Architecture - Intro Tool Calling Pipeline for Powering Up Small AI Models](https://raw.githubusercontent.com/district-solutions/open-agent-tools-coder/refs/heads/main/stack/img/oats-intro.jpg)
 
@@ -9,6 +9,8 @@ Open Agent Tools (oats) enables small-to-large self-hosted ai models to use loca
 - Supports over **141,000** tools using the [open-agent-tools prompt indices repo](https://github.com/district-solutions/open-agent-tools). Requires cloning the repo(s) locally for the tool-calling to function.
 
 - [Find more OATs Prompt Indices Datasets on HuggingFace](https://huggingface.co/datasets/open-agent-tools/open-tools)
+
+![Example Knowledge Graph with Semantic Tree for Litigation Tool-Calling](https://raw.githubusercontent.com/district-solutions/open-agent-tools-coder/refs/heads/main/stack/img/open-agent-tools-example-knowledge-graph-with-an-example-semantic-tree-for-ligitation-tool-calling.jpg)
 
 ## Install
 

@@ -28,11 +28,25 @@ _started_at = time()
 
 
 def incr(key: str, n: int = 1) -> None:
+    """Increment a counter by *n*.
+
+    Args:
+        key: The counter name.
+        n: Amount to increment by (default 1).
+    """
     with _lock:
         _counters[key] += n
 
 
 def get(key: str) -> int:
+    """Get the current value of a counter.
+
+    Args:
+        key: The counter name.
+
+    Returns:
+        The counter value, or 0 if not set.
+    """
     return _counters.get(key, 0)
 
 
@@ -47,6 +61,6 @@ def snapshot() -> dict[str, Any]:
 
 
 def reset() -> None:
-    """Mostly for tests. Production code should never call this."""
+    """Reset all counters. Mostly for tests; production code should never call this."""
     with _lock:
         _counters.clear()

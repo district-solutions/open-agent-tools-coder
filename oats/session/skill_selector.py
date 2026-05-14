@@ -38,6 +38,15 @@ _MIN_SCORE = float(os.getenv("CODER_SKILL_MIN_SCORE", "1.0"))
 
 @dataclass(frozen=True)
 class SkillMatch:
+    """A matched skill from the BM25 index.
+
+    Attributes:
+        name: The skill's display name.
+        command: The slash command to invoke the skill.
+        summary: Short summary of what the skill does.
+        prompt: The skill's procedural prompt text.
+        score: BM25 relevance score.
+    """
     name: str
     command: str
     summary: str
@@ -46,9 +55,14 @@ class SkillMatch:
 
 
 class _IndexCache:
-    """mtime-keyed cache of the BM25 index and skill records."""
+    """mtime-keyed cache of the BM25 index and skill records.
+
+    Avoids re-indexing on every turn by checking the skills file mtime.
+    When the file changes, the cache is invalidated and rebuilt.
+    """
 
     def __init__(self) -> None:
+        """Initialize an empty index cache."""
         self._path: str | None = None
         self._mtime: float | None = None
         self._desc_index = None
@@ -56,6 +70,11 @@ class _IndexCache:
         self._skill_descriptions: list[str] = []
 
     def _current(self) -> tuple[str, float | None]:
+        """Get the current skills file path and its mtime.
+
+        Returns:
+            Tuple of (file_path, mtime). mtime is None if the file doesn't exist.
+        """
         path = _resolve_skills_path()
         try:
             mtime = os.path.getmtime(path)
@@ -64,6 +83,14 @@ class _IndexCache:
         return path, mtime
 
     def load(self) -> tuple[Any, list[str], list[dict[str, Any]]]:
+        """Load or return the cached BM25 index.
+
+        Returns the cached index if the skills file hasn't changed,
+        otherwise rebuilds from disk.
+
+        Returns:
+            Tuple of (bm25_index, descriptions, skill_records).
+        """
         path, mtime = self._current()
         if self._desc_index is not None and path == self._path and mtime == self._mtime:
             return self._desc_index, self._skill_descriptions, self._skill_records
@@ -95,6 +122,13 @@ def select_skills_for_prompt(user_input: str, top_k: int = 1) -> list[SkillMatch
     Uses pure BM25 against skill summaries; no remote LLM call. Scores below
     ``CODER_SKILL_MIN_SCORE`` are filtered out so the injection is skipped
     when nothing relevant is in the catalog.
+
+    Args:
+        user_input: The user's prompt text to match against.
+        top_k: Maximum number of skills to return.
+
+    Returns:
+        List of SkillMatch objects, sorted by descending BM25 score.
     """
     if not user_input.strip():
         return []
@@ -135,6 +169,12 @@ def format_skill_section(matches: list[SkillMatch]) -> str | None:
 
     Keeps the section compact: one heading per skill with name, command, and
     the skill's own procedural prompt inlined.
+
+    Args:
+        matches: List of SkillMatch objects to format.
+
+    Returns:
+        Markdown-formatted string, or None if no matches.
     """
     if not matches:
         return None
@@ -151,6 +191,6 @@ def format_skill_section(matches: list[SkillMatch]) -> str | None:
 
 
 def reset_cache() -> None:
-    """Testing hook — drop the cached BM25 index."""
+    """Testing hook — drop the cached BM25 index and create a fresh cache."""
     global _cache
     _cache = _IndexCache()
