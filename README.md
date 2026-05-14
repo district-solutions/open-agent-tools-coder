@@ -14,7 +14,7 @@ Open Agent Tools (oats) enables small-to-large self-hosted ai models to use loca
 
 ## Supported Coder Slash Commands
 
-By default if there is no starting ``/`` character in the prompt, then coder treats the message a as chat message.
+By default if there is no starting ``/`` character in the prompt, then coder treats the prompt as just a chat message.
 
 Here are the supprted internal **slash** commands:
 
