@@ -86,6 +86,44 @@ def _print_config(console: Console):
         for path, rule in cfg.permission.write.items():
             console.print(f"  [dim]write[/dim] {path} → {rule}")
 
+    coder_config_file = os.getenv('CODER_CONFIG_FILE', None)
+    if coder_config_file is None:
+        console.print(f"  [red]Warning - environment variable CODER_CONFIG_FILE is not set[/red] Please run [cyan]export CODER_CONFIG_FILE=PATH/coder.json[/cyan] then restart with [cyan]oat[/cyan]")
+    else:
+        if os.path.exists(coder_config_file):
+            from oats.cli.validate_coder_env import validate_coder_env
+            valid_env_vllm_small = False
+            try:
+                valid_env_vllm_small = validate_coder_env(provider_id='vllm-small')
+                if not valid_env_vllm_small:
+                    console.print(f'[red]Detected vLLM - chat - misconfigured[/red] named: [cyan]vllm-small[/cyan].\n  👉 Please check the config: [cyan]{coder_config_file}[/cyan]')
+
+            except Exception:
+                console.print(f'[red]Detected Invalid vLLM - chat[/red] with vLLM: [cyan]vllm-small[/cyan].\n  👉 Please check the config: [cyan]{coder_config_file}[/cyan]')
+            valid_env_tool_t1 = False
+            try:
+                valid_env_tool_t1 = validate_coder_env(provider_id='t1')
+                if not valid_env_tool_t1:
+                    console.print(f'[red]Detected vLLM - tool calling- misconfigured[/red] named: [cyan]t1[/cyan].\n  👉 Please check the config: [cyan]{coder_config_file}[/cyan]')
+            except Exception:
+                console.print(f'[red]Detected Invalid vLLM - tool calling[/red] with vLLM: [cyan]t1[/cyan].\n\n  👉 Please check the config: [cyan]{coder_config_file}[/cyan]')
+            console.print(f"\n  Checking env var CODER_CONFIG_FILE\n\n  [yellow]{coder_config_file}[/yellow]\n")
+            num_missing = 0
+            if valid_env_vllm_small:
+                console.print("  [green]vllm-small[/green] - [cyan]chat:latest[/cyan] - [green]active ✔[/green]")
+            else:
+                num_missing += 1
+                console.print("  [red]vllm-small[/red] - [cyan]chat:latest[/cyan] - [red]offline[/red]")
+            if valid_env_tool_t1:
+                console.print("  [green]tool-calling[/green] - [cyan]openai/google/functiongemma-270m-it[/cyan] - [green]active ✔[/green]")
+            else:
+                console.print("  [red]tool-calling[/red] - [cyan]openai/google/functiongemma-270m-it[/cyan] - [red]offline[/red]")
+                num_missing += 1
+            if num_missing > 0:
+                console.print(f"\n  👉 [yellow]Detected {num_missing} vLLM instances in the CODER_CONFIG_FILE is[/yellow] [red]missing[/red] or [purple]incorrect[/purple] - [cyan]{coder_config_file}[/cyan]")
+        else:
+            console.print("  [red]Warning - environment variable CODER_CONFIG_FILE is missing[/red]  👉 Please run [cyan]export CODER_CONFIG_FILE=PATH/coder.json[/cyan] then restart with [cyan]oat[/cyan]")
+
     console.print()
 
 

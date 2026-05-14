@@ -166,27 +166,52 @@ git clone https://huggingface.co/google/functiongemma-270m-it stack/models/hf/go
 ./restart-tool-functiongemma-1.sh
 ```
 
-### Local Model Setup with the coder.json
+### Local AI - Coder Config File Setup - vLLM Backends
 
-To use local models from any directory on disk, make sure to set the ``CODER_CONFIG_FILE`` env variable to the default
-
-```
-# may want to add to your ~/.bashrc to always load at the abosolute path on disk:
-# export CODER_CONFIG_FILE=PATH/coder.json
-# for testing from the repo's root directory:
-export CODER_CONFIG_FILE=$(pwd)/oats/config/coder.json
-```
-
-#### Optional - Setup the coder.json File for vLLM or Additional Local Models
-
-We usually keep the credentials outside the repo like:
+To setup a new coder config file run this command:
 
 ```
-# from the repo root dir
-cp ./oats/config/coder.json /opt/oats-coder.json
+setup-coder
 ```
 
-Then we edit the ``/opt/oats-coder.json`` file and then set the env variable in our ``~/.bashrc``:
+It will load a command line wizard to create a new ``coder.json`` file for your environment:
+
+```
+OATs Coder Config Setup
+
+🎉 🎉 😄 Welcome thanks for checking out the oats coder.😄 🎉 🎉
+
+-----------------------------------------------------------------------------------------------
+
+We would like to help everyone setup the coder configuration the same way because it can be
+annoying the first time. Please let us know if there's a way to make this easier!!🔧🔧
+
+If you hit an issue please reach out so we can help everyone:
+https://github.com/district-solutions/open-agent-tools-coder/issues/new
+
+-----------------------------------------------------------------------------------------------
+
+By default the coder requires a coder.json file that holds the location and credentials to
+access 1 to many vLLM instances. If you do not have these deployed, please refer to the Readme:
+https://github.com/district-solutions/open-agent-tools-coder/blob/main/README.md
+
+Once you have your vLLM running, you can save the coder.json to a custom location outside the
+repo for security purposes.
+
+By default this tool will save the coder.json file with the vLLM credentials to:
+
+ /tmp/coder.json
+
+Let's get started!!
+
+-----------------------------------------------------------------------------------------------
+
+❓ Do you want to save the coder.json file to another location?
+   - Hit enter to use the default
+   [/tmp/coder.json]:
+```
+
+Then we usually save the ``coder.json`` file outside the repo for security purposes like: ``/opt/oats-coder.json``. To set this permanently add it to your ``~/.bashrc``:
 
 ```
 export CODER_CONFIG_FILE=/opt/oats-coder.json
@@ -194,10 +219,41 @@ export CODER_CONFIG_FILE=/opt/oats-coder.json
 
 ## Chatting with AI
 
+### Local AI - Validate the Coder vLLM Backends
+
+If you do not see the same type of output when running ``check-coder-env`` then refer to the **Coder Config File Setup** section for fixing the ``CODER_CONFIG_FILE``.
+
+```
+$ check-coder-env
+vLLM - chat - vllm-small - online ✔
+vLLM - tool-calling - t1 - online ✔
+```
+
+### Validate Coder Providers
+
+Confirm the ``providers`` show up as expected:
+
+```
+$ pv
+vllm-small (vllm-small): configured
+t1 (t1): configured
+ow (ow): not configured
+Anthropic (anthropic): not configured
+OpenAI (openai): not configured
+Azure OpenAI (azure): not configured
+Google AI (google): not configured
+Mistral (mistral): not configured
+Groq (groq): not configured
+OpenRouter (openrouter): not configured
+Together AI (together): not configured
+Cohere (cohere): not configured
+Ollama (ollama): configured
+```
+
 ### Start the OATs Coder
 
 ```
-$ ff
+$ oat
 Let's build together!! 🤗 🤖 🔨 🔧
 Starting up oats coder please wait...
 If you hit an error, please open an issue so we can help fix it:
@@ -213,18 +269,59 @@ github.com/district-solutions/open-agent-tools-coder/issues
 ❯
 ```
 
+### Local AI - vLLM Validation - OATs Config File
+
+If you do not see the same output when you run ``/config`` then something is wrong with the ``CODER_CONFIG_FILE``. Chat and tool-calling will not work with local, self-hosted ai models until the coder config file is fixed.
+
+```
+$ /config
+
+  ...
+
+  Checking env var CODER_CONFIG_FILE
+
+  <PATH_TO_YOUR_CODER_CONFIG_FILE>
+
+  vllm-small - chat:latest - active ✔
+  tool-calling - openai/google/functiongemma-270m-it - active ✔
+```
+
 ### Verify Chat Works
 
 ```
 ❯ say hello
   ──────────────────────────────────────────────────
-2026-05-12 17:01:23 - sprc - INFO - loading_core_tools: 15
-2026-05-12 17:01:23 - sprc - INFO - using_core_tools: {'tool_search', 'websearch', 'grep', 'todowrite', 'read', 'todoread', 'edit',
-'memory_write', 'bash', 'webfetch', 'glob', 'multiedit', 'memory_read', 'write', 'question'} model_id: vllm-small@hosted_vllm/chat:latest
-
 Hello! How can I help you today?
 
   2.0s
+```
+
+## Local AI - Use a Chat Model and a Tool-Calling Model to Run Local Source Code
+
+This will run source code on the ``t1`` tool-calling vLLM ai model.
+
+```
+coder [edit]❯ get third friday
+  ──────────────────────────────────────────────────
+  ▸ get_third_friday_dates {}
+    ✓ The third Friday dates for 2026 are 20260515 20260619 20260717 20260821 20260918
+20261016.
+  ↻ iter 2
+
+Here are the third Friday dates for the next 6 months:
+
+
+ Month           Date
+ ────────────────────────────────────────
+ May 2026        May 15, 2026 (tomorrow!)
+ June 2026       June 19, 2026
+ July 2026       July 17, 2026
+ August 2026     August 21, 2026
+ September 2026  September 18, 2026
+ October 2026    October 16, 2026
+
+
+  tools:1 · 9.2s
 ```
 
 ## Troubleshooting

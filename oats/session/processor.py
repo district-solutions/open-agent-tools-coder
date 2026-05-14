@@ -19,6 +19,7 @@ from typing import Optional, Any, AsyncIterator, Awaitable, Callable
 
 from oats.models import OatPromptChoices
 from oats.agent_get_tool_choices_for_prompt import agent_get_tool_choices_for_prompt
+from oats.cli.validate_coder_env import validate_coder_env
 from oats.core.config import get_config
 from oats.core.bus import bus, Event, EventType
 from oats.provider.provider import CompletionRequest, CompletionChunk, Message as ProviderMessage, ToolDefinition, get_provider
@@ -120,65 +121,6 @@ TODO_REMINDER_TEXT = (
 
 _THINK_RE = re.compile(r'<think>.*?</think>\s*', re.DOTALL)
 _SPECIAL_TOKEN_RE = re.compile(r'<[|/]?[\w"|]+[|]?>')
-
-def validate_coder_env(config, provider_id: str, model_id: str, verbose: bool = False) -> bool:
-    found_base_url = None
-    config_dict = {}
-    coder_config_file = os.getenv('CODER_CONFIG_FILE', None)
-    if coder_config_file is None:
-        err_msg = f'### Sorry!!💥 The environment variable: ``CODER_CONFIG_FILE`` is missing. Please create your own oats/coder.json file outside the repo and then export it with:\n```\nexport CODER_CONFIG_FILE=PATH/coder.json\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    else:
-        config_contents = ''
-        with open(coder_config_file, 'r') as file:
-            config_contents = file.read()
-        if config_contents == '':
-            err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is empty. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-            log.info(err_msg)
-            raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-        try:
-            config_dict = json.loads(config_contents)
-        except Exception:
-            err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE has ❗💥 ``invalid JSON``💥❗. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\nCurrent CODER_CONFIG_FILE contents:\n```\n{config_contents}\n```\n'
-            log.info(err_msg)
-            raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    if len(config_dict) == 0:
-        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE does not have any valid model providers. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.js  on`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    if 'provider' not in config_dict:
-        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing the ``provider`` root key. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.js  on`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    if provider_id not in config_dict['provider']:
-        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing the provider_id: ``{provider_id}`` in the providers root key dictionary. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    if 'models' not in config_dict['provider'][provider_id]:
-        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing the ``models`` list in the provider_id: ``{provider_id}`` definition. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    found_model = False
-    if 'base_url' not in config_dict['provider'][provider_id]:
-        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing a ``base_url`` for the provider_id: ``{provider_id}`` to reach the backend ai service. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    for model_node in config_dict['provider'][provider_id]['models']:
-        if 'name' not in model_node:
-            err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE provider_id: ``{provider_id}`` is missing a valid model dictionary in the ``models`` list.\n\nPlease check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-            log.info(err_msg)
-            raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-        else:
-            if model_node['name'] == model_id:
-                found_model = True
-    if not found_model:
-        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE provider_id: ``{provider_id}`` does not have the model_id: ``{model_id}`` in the ``models`` list.\n\nPlease check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
-        log.info(err_msg)
-        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
-    if verbose:
-        log.info(f'validated CODER_CONFIG_FILE for chat with provider_id: {provider_id} with model_id: {model_id}')
-    return True
 
 def _todo_reminder_turn_counts(messages, last_reminder_turn: int) -> tuple[int, int | None, int | None]:
     """Return (next_turn, turns_since_todowrite, turns_since_reminder).
@@ -344,7 +286,7 @@ class SessionProcessor:
         config = get_config()
         provider_id = self.session.info.provider_id or config.model.provider_id
         model_id = self.session.info.model_id or config.model.model_id
-        validate_coder_env(config=config, provider_id=provider_id, model_id=model_id)
+        validate_coder_env(provider_id=provider_id, model_id=model_id)
 
         if not self._session_start_fired:
             self._session_start_fired = True
