@@ -19,9 +19,9 @@ By default if there is no starting ``/`` character in the prompt, then coder tre
 Here are the supprted internal **slash** commands:
 
 - /help - supported usage
-- /browse - use playwi
 - /mode - change mode
 - /approve - toggle auto approval mode
+- /browse - browse to a url using playwright and support storing as json, parquet with storage on s3
 - /clear - clear the session
 - /session - view the session
 - /cost - view token usage
