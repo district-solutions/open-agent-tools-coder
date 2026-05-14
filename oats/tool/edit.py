@@ -187,6 +187,21 @@ Use replace_all=true to replace all occurrences."""
         return path.resolve()
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Edit a file by replacing text, with smart fallback strategies.
+
+        Tries three strategies in order:
+        1. **Exact match** — direct string replacement.
+        2. **Fuzzy match** — find the closest matching block (>80% similarity).
+        3. **Write-swap** — rebuild the file with the intended change applied.
+
+        Args:
+            args: Must contain ``file_path`` (str), ``old_string`` (str),
+                ``new_string`` (str). May contain ``replace_all`` (bool).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the edit result and strategy used.
+        """
         file_path = args.get("file_path", "")
         old_string = args.get("old_string", "")
         new_string = args.get("new_string", "")
@@ -382,6 +397,20 @@ Use replace_all=true to replace all occurrences."""
         new_string: str,
         replace_all: bool,
         ctx: ToolContext,
+    ) -> ToolResult:
+        """Apply an exact string replacement and write the file.
+
+        Args:
+            path: The resolved file path.
+            content: The current file content.
+            old_string: The text to find.
+            new_string: The replacement text.
+            replace_all: Whether to replace all occurrences.
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the edit result.
+        """
     ) -> ToolResult:
         """Apply an exact-match replacement (the original primary path)."""
         occurrences = content.count(old_string)

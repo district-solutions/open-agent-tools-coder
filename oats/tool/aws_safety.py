@@ -21,6 +21,11 @@ from enum import Enum
 
 
 class AwsRisk(str, Enum):
+    """Risk classification for AWS CLI commands.
+
+    Used to determine how much user approval a command needs before execution.
+    """
+
     READ = "read"         # describe / list / get / head — auto-approve safe
     MUTATE = "mutate"     # create / delete / put / update / terminate — confirm
     AUTH = "auth"         # login / logout / configure — may need TTY
@@ -29,6 +34,17 @@ class AwsRisk(str, Enum):
 
 @dataclass
 class AwsCommandInfo:
+    """Metadata about a parsed AWS CLI command.
+
+    Attributes:
+        is_aws: Whether the command invokes the AWS CLI.
+        risk: The risk classification of the command.
+        service: The AWS service (e.g. 's3', 'ec2', 'iam').
+        operation: The operation verb (e.g. 'ls', 'cp', 'describe-instances').
+        needs_tty: Whether the command requires a real TTY (e.g. SSO login).
+        reason: A short human-readable explanation of the classification.
+    """
+
     is_aws: bool
     risk: AwsRisk
     service: str | None = None       # s3, ec2, iam, ...
@@ -102,7 +118,18 @@ def _first_aws_tokens(command: str) -> tuple[str, list[str]] | None:
 
 
 def classify(command: str) -> AwsCommandInfo:
-    """Classify an `aws ...` shell command."""
+    """Classify an ``aws ...`` shell command by risk level.
+
+    Parses the command to extract the AWS service and operation verb, then
+    classifies it as :data:`AwsRisk.READ`, :data:`AwsRisk.MUTATE`,
+    :data:`AwsRisk.AUTH`, or :data:`AwsRisk.UNKNOWN`.
+
+    Args:
+        command: The full shell command string.
+
+    Returns:
+        An :class:`AwsCommandInfo` with the classification result.
+    """
     if "aws" not in command:
         return AwsCommandInfo(is_aws=False, risk=AwsRisk.UNKNOWN)
 

@@ -82,6 +82,18 @@ Use the 'edit' tool for making changes to existing files."""
         return path.resolve()
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Write content to a file, creating it or overwriting if it exists.
+
+        Creates parent directories as needed. Optionally syncs with the LSP
+        server for diagnostics if the feature is enabled.
+
+        Args:
+            args: Must contain ``file_path`` (str) and ``content`` (str).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the file path, line count, and optional LSP diagnostics.
+        """
         file_path = args.get("file_path", "")
         content = args.get("content", "")
 

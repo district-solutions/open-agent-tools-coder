@@ -54,6 +54,19 @@ The content is converted to plain text/markdown for easier processing."""
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Fetch content from a URL and convert it to plain text/markdown.
+
+        Validates the URL, fetches the content via HTTP, and converts HTML to
+        simplified text. Content is truncated if it exceeds the maximum length.
+
+        Args:
+            args: Must contain ``url`` (str). May contain ``prompt`` (str) for
+                describing what information to extract.
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the fetched content and metadata.
+        """
         url = args.get("url", "")
         prompt = args.get("prompt", "")
 

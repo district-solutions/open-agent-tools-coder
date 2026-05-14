@@ -1,3 +1,9 @@
+"""
+Open-WebUI authentication and login utilities.
+
+Provides functions to authenticate against an Open-WebUI instance
+and retrieve API tokens for subsequent requests.
+"""
 import os
 import requests
 import traceback
@@ -13,7 +19,12 @@ def login_to_openwebui(
     verbose: bool = False,
 ):
     """
-    login to the openweb ui api and get the user's api token
+    Login to the Open-WebUI API and get the user's API token.
+
+    Authenticates against an Open-WebUI instance via the /api/v1/auths/signin
+    endpoint. Credentials are resolved from explicit parameters or environment
+    variables (CODER_CHAT_URL, CODER_CHAT_EMAIL, CODER_CHAT_PASSWORD). The
+    base URL is normalized to include the appropriate http/https scheme.
 
     Example
 
@@ -22,14 +33,15 @@ def login_to_openwebui(
     email = os.getenv("CODER_CHAT_EMAIL", "email@email.com")
     password = os.getenv("CODER_CHAT_PASSWORD", "123321")
     login_dict = login_to_openwebui(email, password)
-    print(login_dict.get("token", "no-token-found")
+    print(login_dict.get("token", "no-token-found"))
     ```
 
-    :param email: user email
+    :param email: user email address
     :param password: user password
-    :param base_url: url for openweb ui
+    :param base_url: URL for the Open-WebUI instance (falls back to CODER_CHAT_URL env var)
     :param verbose: log more if enabled
-    :return: dictionary from openweb ui login
+    :return: dictionary from Open-WebUI login response, or None on failure
+    :raises Exception: if required credentials (URL, email, or password) are missing
     """
     base_address = os.getenv("CODER_CHAT_URL", base_url)
     if base_address is None:

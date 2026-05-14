@@ -90,6 +90,19 @@ Do NOT use bash for:
         return f"Execute command: {command[:100]}{'...' if len(command) > 100 else ''}"
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Execute a shell command and capture its output.
+
+        Runs the command in a subprocess with stdout/stderr merged. Output is
+        truncated if it exceeds the configured limits.
+
+        Args:
+            args: Must contain ``command`` (str). May contain ``timeout`` (int,
+                seconds) and ``working_dir`` (str).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the command output and exit code.
+        """
         command = args.get("command", "")
         timeout = min(args.get("timeout", self.DEFAULT_TIMEOUT), 600)
         working_dir = args.get("working_dir")

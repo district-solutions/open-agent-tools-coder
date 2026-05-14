@@ -54,6 +54,18 @@ Returns search results with titles, URLs, and snippets."""
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Search the web using the best available backend.
+
+        Tries backends in priority order: SerpAPI → Brave → Tavily →
+        Playwright/DuckDuckGo → DuckDuckGo instant answer API.
+
+        Args:
+            args: Must contain ``query`` (str). May contain ``num_results`` (int, default 5).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with search results or an error message.
+        """
         query = args.get("query", "")
         num_results = min(args.get("num_results", 5), self.MAX_RESULTS)
 

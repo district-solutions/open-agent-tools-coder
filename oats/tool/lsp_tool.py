@@ -107,6 +107,20 @@ Requires an appropriate language server installed locally for the file type.
         return True
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Execute an LSP operation (definition, references, hover, etc.).
+
+        Detects the appropriate language server for the file type, syncs the
+        file content, and runs the requested operation.
+
+        Args:
+            args: Must contain ``operation`` (str). May contain ``file_path`` (str),
+                ``line`` (int), ``column`` (int), ``query`` (str), and
+                ``include_declaration`` (bool).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the formatted LSP response.
+        """
         operation = args.get("operation")
         file_path = args.get("file_path")
         line = int(args.get("line", 1))
@@ -190,7 +204,22 @@ Requires an appropriate language server installed locally for the file type.
         column: int,
         include_declaration: bool,
     ) -> Any:
-        position = {"line": max(0, line - 1), "character": max(0, column - 1)}
+        """Run a file-scoped LSP operation against the language server.
+
+        Dispatches to the appropriate LSP method based on the operation name.
+
+        Args:
+            instance: The LSP server instance.
+            operation: One of ``definition``, ``references``, ``hover``,
+                ``diagnostics``, or ``document_symbols``.
+            path: The file path.
+            line: 1-based line number.
+            column: 1-based column number.
+            include_declaration: Whether to include declarations for references.
+
+        Returns:
+            The raw LSP response.
+        """
         doc = {"uri": path_to_uri(path)}
 
         if operation == "definition":
@@ -222,6 +251,18 @@ Requires an appropriate language server installed locally for the file type.
         raise RuntimeError(f"Unsupported LSP operation: {operation}")
 
     def _format_result(self, operation: str, result: Any, path: Path | None = None) -> str:
+        """Format a raw LSP response into a human-readable string.
+
+        Dispatches to the appropriate formatter based on the operation type.
+
+        Args:
+            operation: The LSP operation name.
+            result: The raw LSP response.
+            path: Optional file path for diagnostics formatting.
+
+        Returns:
+            A formatted string suitable for display.
+        """
         if result is None:
             return "No result."
         if operation == "hover":
@@ -237,6 +278,16 @@ Requires an appropriate language server installed locally for the file type.
         return str(result)
 
     def _format_hover(self, result: Any) -> str:
+        """Format a hover response into a readable string.
+
+        Handles plain strings, markdown content dicts, and lists of content items.
+
+        Args:
+            result: The raw hover response from the LSP server.
+
+        Returns:
+            The hover content as a string.
+        """
         contents = result.get("contents") if isinstance(result, dict) else result
         if isinstance(contents, str):
             return contents

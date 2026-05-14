@@ -59,6 +59,19 @@ This ensures the user can review the approach before any changes are made."""
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Enter planning mode and create an initial plan file.
+
+        Creates a skeleton plan file at the specified path (default ``.coder/plan.md``)
+        and stores the planning state in session-scoped storage. While in planning mode,
+        file-modifying tools are blocked.
+
+        Args:
+            args: May contain ``reason`` (str) and ``plan_file`` (str, path for the plan file).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` confirming entry into planning mode with instructions.
+        """
         reason = args.get("reason", "Creating implementation plan")
         plan_file = args.get("plan_file", ".coder/plan.md")
 
@@ -151,7 +164,7 @@ When the plan is complete, use plan_exit to request approval.""",
 
 
 class PlanExitTool(Tool):
-    """Exit planning mode and request approval."""
+    """Exit planning mode and request user approval for the plan."""
 
     @property
     def name(self) -> str:
@@ -183,6 +196,19 @@ The user will review the plan and can:
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Exit planning mode and present the plan for user approval.
+
+        Reads the plan file content, deactivates planning mode, and sets the
+        session state to ``awaiting_approval``. The user can then approve,
+        request changes, or cancel.
+
+        Args:
+            args: May contain ``summary`` (str) — a brief summary of the plan.
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the plan content and approval options.
+        """
         summary = args.get("summary", "")
 
         # Check if in planning mode
@@ -267,6 +293,15 @@ class PlanStatusTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Check the current planning mode status for the session.
+
+        Args:
+            args: Unused (no parameters required).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the planning mode status and metadata.
+        """
         state = await _plan_storage.get(ctx.session_id)
 
         if not state:

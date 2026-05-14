@@ -81,6 +81,20 @@ all edits are applied atomically."""
         return path.resolve()
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Apply multiple text replacements to a single file in sequence.
+
+        Each edit is applied in order so that later edits see the results of
+        earlier ones. The file is written only if at least one replacement
+        was made.
+
+        Args:
+            args: Must contain ``file_path`` (str) and ``edits`` (list of dicts
+                with ``old_string``, ``new_string``, and optional ``replace_all``).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with per-edit results and a total replacement count.
+        """
         file_path = args.get("file_path", "")
         edits = args.get("edits", [])
 

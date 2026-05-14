@@ -84,6 +84,19 @@ Results are sorted by modification time (newest first)."""
         return path.resolve()
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Find files matching a glob pattern.
+
+        Supports both recursive (``**``) and non-recursive patterns. Results are
+        sorted by modification time (newest first) and truncated to MAX_RESULTS.
+
+        Args:
+            args: Must contain ``pattern`` (str). May contain ``path`` (str,
+                directory to search in).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the list of matching file paths.
+        """
         pattern = args.get("pattern", "")
         search_path = args.get("path")
 

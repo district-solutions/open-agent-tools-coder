@@ -86,6 +86,20 @@ They can select from the provided options or type a custom response."""
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Publish one or more questions to the user and await a response.
+
+        Sends a PERMISSION_REQUEST event to the bus so the UI can display the
+        questions. In CLI mode, the questions are formatted for display.
+
+        Args:
+            args: Must contain ``questions`` — a list of dicts with keys
+                ``question``, ``header``, ``options``, and optional ``multiSelect``.
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the formatted questions and a flag indicating
+            that a response is awaited.
+        """
         questions = args.get("questions", [])
 
         if not questions:
@@ -157,7 +171,7 @@ They can select from the provided options or type a custom response."""
 
 
 class AskUserTool(Tool):
-    """Simplified tool for asking a single question."""
+    """Simplified tool for asking a single yes/no or choice question."""
 
     @property
     def name(self) -> str:
@@ -193,6 +207,20 @@ For complex multi-part questions, use the 'question' tool instead."""
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Ask the user a simple question with optional choices.
+
+        Publishes a PERMISSION_REQUEST event to the bus so the UI can display
+        the question and collect a response.
+
+        Args:
+            args: Must contain ``question`` (str). May contain ``options``
+                (list of str) and ``default`` (str).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the formatted question and a flag indicating
+            that a response is awaited.
+        """
         question = args.get("question", "")
         options = args.get("options", [])
         default = args.get("default", "")

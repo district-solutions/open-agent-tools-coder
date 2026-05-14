@@ -113,6 +113,20 @@ Supports:
         return path.resolve()
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Search for regex patterns in files.
+
+        Uses ripgrep if available, otherwise falls back to Python regex.
+        Supports file type filtering, context lines, and multiple output modes.
+
+        Args:
+            args: Must contain ``pattern`` (str). May contain ``path`` (str),
+                ``glob`` (str), ``type`` (str), ``case_insensitive`` (bool),
+                ``context_lines`` (int), and ``output_mode`` (str: 'content', 'files', 'count').
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with search results or an error message.
+        """
         pattern = args.get("pattern", "")
         search_path = args.get("path")
         glob_pattern = args.get("glob")

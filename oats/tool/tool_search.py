@@ -13,6 +13,10 @@ log = cl('tool.search')
 
 
 def _tokenize(text: str) -> set[str]:
+    """Split *text* into lowercase alphanumeric tokens.
+
+    Strips punctuation and returns a set of word-like tokens for fuzzy matching.
+    """
     return set(re.findall(r"[a-z0-9_./-]+", text.lower()))
 
 
@@ -80,6 +84,15 @@ Query examples:
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Search the tool catalog and return schemas for matched tools.
+
+        Args:
+            args: Must contain ``query`` (str) and optionally ``max_results`` (int).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with matched tool schemas or an error message.
+        """
         query = str(args.get("query", "")).strip()
         max_results = max(1, min(int(args.get("max_results", 8)), 20))
 
@@ -132,6 +145,22 @@ Query examples:
         tools: list[Tool],
         max_results: int,
     ) -> list[Tool]:
+        """Match tools against a query string.
+
+        Supports two modes:
+        - **Exact select**: If the query starts with ``select:``, match tools by
+          name or alias exactly (comma-separated).
+        - **Fuzzy search**: Tokenize the query and score each tool by name,
+          alias, keyword, and description overlap.
+
+        Args:
+            query: The search query string.
+            tools: The list of tools to search through.
+            max_results: Maximum number of results to return.
+
+        Returns:
+            A list of matching tools, sorted by relevance score.
+        """
         query_lower = query.lower()
         if query_lower.startswith("select:"):
             wanted = {

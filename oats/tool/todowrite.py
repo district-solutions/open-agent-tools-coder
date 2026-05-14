@@ -94,6 +94,19 @@ Example:
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Store the updated todo list for the current session.
+
+        Parses the incoming todo items, validates them, persists them to
+        session-scoped storage, and returns a formatted summary.
+
+        Args:
+            args: Must contain ``todos`` — a list of dicts with keys
+                ``content``, ``status``, and ``activeForm``.
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the formatted todo list and progress summary.
+        """
         todos_data = args.get("todos", [])
 
         if not todos_data:
@@ -153,7 +166,7 @@ Example:
 
 
 class TodoReadTool(Tool):
-    """Read the current task list."""
+    """Read the current task list for this session."""
 
     @property
     def name(self) -> str:
@@ -173,6 +186,18 @@ Returns the list of tasks with their status."""
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Read and display the current todo list for the session.
+
+        Retrieves the stored todo list from session-scoped storage and formats
+        it with status icons and a progress summary.
+
+        Args:
+            args: Unused (no parameters required).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the formatted todo list and progress summary.
+        """
         data = await _todo_storage.get(ctx.session_id)
 
         if not data:

@@ -100,6 +100,19 @@ For large files, use offset and limit parameters."""
         return path.resolve()
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Read the contents of a file and return it with line numbers.
+
+        Supports offset and limit parameters for reading portions of large files.
+        Long lines are truncated to MAX_LINE_LENGTH.
+
+        Args:
+            args: Must contain ``file_path`` (str). May contain ``offset`` (int,
+                1-based line number) and ``limit`` (int, max lines to read).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the file contents formatted with line numbers.
+        """
         file_path = args.get("file_path", "")
         offset = args.get("offset", 1)
         limit = args.get("limit", self.MAX_LINES)

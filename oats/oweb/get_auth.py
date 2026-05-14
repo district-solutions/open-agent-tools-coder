@@ -1,3 +1,10 @@
+"""
+Open-WebUI authentication environment variable resolution.
+
+Provides helper functions to retrieve and validate authentication
+credentials (URL, email, password) from environment variables or
+explicit parameters for Open-WebUI interactions.
+"""
 import os
 from oats.log import cl
 
@@ -14,15 +21,21 @@ def get_auth_env(
     verbose: bool = False,
 ):
     """
-    get auth credentials returned as a tuple (url, email, password) for an env and auth type
+    Get auth credentials returned as a tuple (url, email, password) for an env and auth type.
 
-    :param url: fqdn or https://fqdn
-    :param email: email to use
-    :param password: password to use
+    Resolves authentication credentials by checking explicit parameters first,
+    then falling back to environment variables (CODER_CHAT_URL, CODER_CHAT_EMAIL,
+    CODER_CHAT_PASSWORD). Normalizes URL schemes (http/https) as needed.
+
+    :param url: FQDN or https://fqdn for the Open-WebUI instance
+    :param email: email to use for authentication
+    :param password: password to use for authentication
     :param env_name: name of environment
-    :param auth_type: type of auth
-    :param target_oweb: oweb alias
+    :param auth_type: type of auth (used as fallback for target_oweb)
+    :param target_oweb: oweb alias (takes precedence over auth_type)
     :param verbose: log more if enabled
+    :return: tuple of (base_url, email, password)
+    :raises Exception: if required credentials (URL, email, or password) are missing
     """
     base_url = url
     use_auth = target_oweb

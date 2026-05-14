@@ -15,7 +15,14 @@ log = cl("tool.memory")
 
 
 def _get_manager(ctx: ToolContext) -> MemoryManager:
-    """Create a MemoryManager from tool context."""
+    """Create a MemoryManager from the tool context.
+
+    Args:
+        ctx: The tool execution context.
+
+    Returns:
+        A :class:`MemoryManager` scoped to the project directory.
+    """
     return MemoryManager(project_dir=ctx.project_dir)
 
 
@@ -52,6 +59,18 @@ class MemoryReadTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """List or search persistent memories.
+
+        If a query is provided, searches memories by keyword. Otherwise, loads
+        all memories. An optional type filter can narrow results.
+
+        Args:
+            args: May contain ``query`` (str) and ``type_filter`` (str).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the matching memories.
+        """
         manager = _get_manager(ctx)
         query = args.get("query")
         type_filter = args.get("type_filter")
@@ -93,7 +112,7 @@ class MemoryReadTool(Tool):
 
 
 class MemoryWriteTool(Tool):
-    """Create or update a persistent memory."""
+    """Create or update a persistent memory for future sessions."""
 
     @property
     def name(self) -> str:
@@ -143,6 +162,16 @@ class MemoryWriteTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Save a new persistent memory.
+
+        Args:
+            args: Must contain ``title`` (str) and ``content`` (str). May contain
+                ``type`` (str), ``tags`` (list of str), and ``scope`` (str).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` confirming the memory was saved with its ID.
+        """
         manager = _get_manager(ctx)
 
         title = args.get("title", "")
@@ -181,7 +210,7 @@ class MemoryWriteTool(Tool):
 
 
 class MemoryDeleteTool(Tool):
-    """Delete a persistent memory."""
+    """Delete a persistent memory by its ID."""
 
     @property
     def name(self) -> str:
@@ -205,6 +234,15 @@ class MemoryDeleteTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Delete a persistent memory by its ID (partial match accepted).
+
+        Args:
+            args: Must contain ``memory_id`` (str — first 8 chars is enough).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` confirming deletion or an error.
+        """
         manager = _get_manager(ctx)
         memory_id = args.get("memory_id", "")
 

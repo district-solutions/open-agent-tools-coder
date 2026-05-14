@@ -107,6 +107,18 @@ Use this for complex multi-line changes or when you have a patch to apply."""
         return f"Apply patch affecting {len(unique_files)} file(s)"
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Apply a unified diff patch to one or more files.
+
+        Parses the patch, then creates, modifies, or deletes files as specified.
+
+        Args:
+            args: Must contain ``patch`` (str, the unified diff content).
+                May contain ``strip`` (int, path components to strip, default 1).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with per-file results and a summary.
+        """
         patch_content = args.get("patch", "")
         strip = args.get("strip", 1)
 
@@ -200,7 +212,18 @@ Use this for complex multi-line changes or when you have a patch to apply."""
             )
 
     def _parse_patch(self, content: str, strip: int) -> list[FilePatch]:
-        """Parse unified diff format into FilePatch objects."""
+        """Parse a unified diff string into a list of :class:`FilePatch` objects.
+
+        Handles new files (``/dev/null`` as old path), deleted files
+        (``/dev/null`` as new path), and standard modifications.
+
+        Args:
+            content: The unified diff text.
+            strip: Number of leading path components to strip (like ``patch -pN``).
+
+        Returns:
+            A list of :class:`FilePatch` objects.
+        """
         patches: list[FilePatch] = []
         lines = content.split("\n")
         i = 0
@@ -249,7 +272,18 @@ Use this for complex multi-line changes or when you have a patch to apply."""
         return patches
 
     def _strip_path(self, path: str, strip: int) -> str:
-        """Strip leading path components."""
+        """Strip leading path components from a file path.
+
+        Removes ``a/`` or ``b/`` prefixes (from unified diff headers) and then
+        strips the specified number of additional path components.
+
+        Args:
+            path: The file path from the diff header.
+            strip: Number of path components to strip (like ``patch -pN``).
+
+        Returns:
+            The stripped file path.
+        """
         # Remove a/ or b/ prefix
         if path.startswith(("a/", "b/")):
             path = path[2:]
@@ -259,7 +293,18 @@ Use this for complex multi-line changes or when you have a patch to apply."""
         return path
 
     def _parse_hunk(self, lines: list[str], start: int) -> tuple[PatchHunk | None, int]:
-        """Parse a single hunk starting at the given line."""
+        """Parse a single hunk from the patch lines.
+
+        Extracts the line range metadata (``@@ -old_start,old_count +new_start,new_count @@``)
+        and the hunk body lines.
+
+        Args:
+            lines: The full list of patch lines.
+            start: The index of the ``@@`` header line.
+
+        Returns:
+            A tuple of ``(PatchHunk, next_index)`` or ``(None, next_index)`` if parsing fails.
+        """
         line = lines[start]
 
         # Parse @@ -old_start,old_count +new_start,new_count @@
@@ -298,7 +343,17 @@ Use this for complex multi-line changes or when you have a patch to apply."""
         )
 
     def _get_new_content(self, fp: FilePatch) -> str:
-        """Get content for a new file from patch."""
+        """Extract the new file content from a patch's hunks.
+
+        Collects all added (``+``) and context (`` ``) lines from the hunks,
+        stripping the prefix character.
+
+        Args:
+            fp: The :class:`FilePatch` for a new file.
+
+        Returns:
+            The reconstructed file content as a string.
+        """
         lines = []
         for hunk in fp.hunks:
             for line in hunk.lines:
@@ -311,7 +366,19 @@ Use this for complex multi-line changes or when you have a patch to apply."""
     def _apply_hunks(
         self, original_lines: list[str], hunks: list[PatchHunk]
     ) -> list[str]:
-        """Apply hunks to original file content."""
+        """Apply hunks to the original file content in reverse order.
+
+        Reverses the hunks so that line numbers remain valid as earlier
+        hunks are applied. Added (``+``) and context (`` ``) lines are
+        kept; removed (``-``) lines are dropped.
+
+        Args:
+            original_lines: The original file lines (with newlines).
+            hunks: The list of :class:`PatchHunk` objects to apply.
+
+        Returns:
+            The modified file lines as a list of strings.
+        """
         # Convert to list for easier manipulation
         result = list(original_lines)
 
