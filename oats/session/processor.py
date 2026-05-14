@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 import traceback
 import asyncio
-import re as _re
+import re
 import ujson as json
 from pathlib import Path
 from typing import Optional, Any, AsyncIterator, Awaitable, Callable
@@ -118,6 +118,8 @@ TODO_REMINDER_TEXT = (
     "</system-reminder>"
 )
 
+_THINK_RE = re.compile(r'<think>.*?</think>\s*', re.DOTALL)
+_SPECIAL_TOKEN_RE = re.compile(r'<[|/]?[\w"|]+[|]?>')
 
 def validate_coder_env(config, provider_id: str, model_id: str, verbose: bool = False) -> bool:
     found_base_url = None
@@ -199,10 +201,6 @@ def _todo_reminder_turn_counts(messages, last_reminder_turn: int) -> tuple[int, 
     return next_turn, gap_write, gap_reminder
 
 
-import re
-
-_THINK_RE = re.compile(r'<think>.*?</think>\s*', re.DOTALL)
-
 
 def _strip_thinking(content: str) -> str:
     """Remove <think>...</think> blocks from model output before storing.
@@ -215,9 +213,6 @@ def _strip_thinking(content: str) -> str:
         return content
     stripped = _THINK_RE.sub('', content).strip()
     return stripped if stripped else content  # fallback: don't store empty
-
-
-_SPECIAL_TOKEN_RE = _re.compile(r'<[|/]?[\w"|]+[|]?>')
 
 
 def _parse_tool_args(raw: str) -> dict:
