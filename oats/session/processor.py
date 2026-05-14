@@ -119,6 +119,65 @@ TODO_REMINDER_TEXT = (
 )
 
 
+def validate_coder_env(config, provider_id: str, model_id: str, verbose: bool = False) -> bool:
+    found_base_url = None
+    config_dict = {}
+    coder_config_file = os.getenv('CODER_CONFIG_FILE', None)
+    if coder_config_file is None:
+        err_msg = f'### Sorry!!💥 The environment variable: ``CODER_CONFIG_FILE`` is missing. Please create your own oats/coder.json file outside the repo and then export it with:\n```\nexport CODER_CONFIG_FILE=PATH/coder.json\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    else:
+        config_contents = ''
+        with open(coder_config_file, 'r') as file:
+            config_contents = file.read()
+        if config_contents == '':
+            err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is empty. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+            log.info(err_msg)
+            raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+        try:
+            config_dict = json.loads(config_contents)
+        except Exception:
+            err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE has ❗💥 ``invalid JSON``💥❗. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\nCurrent CODER_CONFIG_FILE contents:\n```\n{config_contents}\n```\n'
+            log.info(err_msg)
+            raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    if len(config_dict) == 0:
+        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE does not have any valid model providers. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.js  on`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    if 'provider' not in config_dict:
+        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing the ``provider`` root key. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.js  on`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    if provider_id not in config_dict['provider']:
+        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing the provider_id: ``{provider_id}`` in the providers root key dictionary. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    if 'models' not in config_dict['provider'][provider_id]:
+        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing the ``models`` list in the provider_id: ``{provider_id}`` definition. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    found_model = False
+    if 'base_url' not in config_dict['provider'][provider_id]:
+        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE is missing a ``base_url`` for the provider_id: ``{provider_id}`` to reach the backend ai service. Please check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    for model_node in config_dict['provider'][provider_id]['models']:
+        if 'name' not in model_node:
+            err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE provider_id: ``{provider_id}`` is missing a valid model dictionary in the ``models`` list.\n\nPlease check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+            log.info(err_msg)
+            raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+        else:
+            if model_node['name'] == model_id:
+                found_model = True
+    if not found_model:
+        err_msg = f'### Sorry!!💥 The CODER_CONFIG_FILE provider_id: ``{provider_id}`` does not have the model_id: ``{model_id}`` in the ``models`` list.\n\nPlease check the environment variable: ``CODER_CONFIG_FILE`` file is at that path and is a valid coder.json file like the ``oats/config/coder.json``\n\nHere is the ``coder.json`` config dictionary:\n```\n{pp(config_dict)}\n```\n\nHere is the path to the current config:\n```\nexport CODER_CONFIG_FILE={coder_config_file}\n```\n'
+        log.info(err_msg)
+        raise Exception('Please fix the CODER_CONFIG_FILE for the logged error')
+    if verbose:
+        log.info(f'validated CODER_CONFIG_FILE for chat with provider_id: {provider_id} with model_id: {model_id}')
+    return True
+
 def _todo_reminder_turn_counts(messages, last_reminder_turn: int) -> tuple[int, int | None, int | None]:
     """Return (next_turn, turns_since_todowrite, turns_since_reminder).
 
@@ -286,6 +345,12 @@ class SessionProcessor:
         # first process_message (rather than __init__) so handlers see a
         # fully-initialized session + storage, and sub-agent processors still
         # get the event even though they're constructed mid-turn.
+        # Get provider and model
+        config = get_config()
+        provider_id = self.session.info.provider_id or config.model.provider_id
+        model_id = self.session.info.model_id or config.model.model_id
+        validate_coder_env(config=config, provider_id=provider_id, model_id=model_id)
+
         if not self._session_start_fired:
             self._session_start_fired = True
             try:
@@ -299,7 +364,7 @@ class SessionProcessor:
                 )
             except Exception as e:
                 # Never let a misbehaving SESSION_START handler block the session.
-                log.error(f"### Sorry!! Failed_process_message_hit_error:\n\n```\n{traceback.format_exc()}\n```\n")
+                log.info(f"### Sorry!! Failed_process_message_hit_error:\n\n```\n{traceback.format_exc()}\n```\n")
                 print(f"### Sorry!! Failed_process_message_hit_error:\n\n```\n{traceback.format_exc()}\n```\n")
 
         # Fire user_prompt_submit hook
@@ -327,11 +392,6 @@ class SessionProcessor:
             "content": content,
         }
 
-        # Get provider and model
-        config = get_config()
-        provider_id = self.session.info.provider_id or config.model.provider_id
-        model_id = self.session.info.model_id or config.model.model_id
-
         tool_provider_id = 't1'
 
         tool_provider = None
@@ -345,9 +405,11 @@ class SessionProcessor:
             try:
                 tool_provider = get_provider(tool_provider_id)
             except ValueError as e:
-                log.info(f'### Sorry!! Failed to get local_tool server with tool_provider_id: {tool_provider_id} - please check your coder.json file')
-                yield {"type": "error", "error": str(e)}
-                return
+                if verbose:
+                    log.info(f'warning - no tool_provider_set: {tool_provider_id}')
+                # log.info(f'### Sorry!! Failed to get local_tool server with tool_provider_id: {tool_provider_id} - please check your coder.json file')
+                # yield {"type": "error", "error": str(e)}
+                # return
 
         # Build tool definitions — intent-aware selection
         # log.debug('----\nTool Selection Start\n')
@@ -670,7 +732,7 @@ class SessionProcessor:
                             "content": response_content,
                         }
                 except Exception as e:
-                    log.error(f"### Sorry!! Failed_provider.complete(request):\n\n```\n{traceback.format_exc()}\n```\n")
+                    log.info(f"### Sorry!! Failed_provider.complete(request):\n\n```\n{traceback.format_exc()}\n```\n")
                     if await self._try_reactive_compaction(str(e), compactor):
                         await self._save()
                         yield {
@@ -716,20 +778,13 @@ class SessionProcessor:
 
                 except Exception as e:
                     # Fall back to non-streaming on stream failure
-                    log.error(f"### Sorry!! streaming_failed_check_auth_errors_trying_non_streaming_http:\n\n```\n{traceback.format_exc()}\n```\n")
+                    log.info(f"### Sorry!! streaming_failed_check_auth_errors_trying_non_streaming_http:\n\n```\n{traceback.format_exc()}\n```\n")
                     try:
                         response = await provider.complete(request)
                         response_content = response.content or ""
                         response_tool_calls = response.tool_calls or []
                         response_usage = response.usage
                     except Exception as e2:
-                        if await self._try_reactive_compaction(str(e2), compactor):
-                            await self._save()
-                            yield {
-                                "type": "compaction",
-                                "message": "Conversation compacted reactively after context overflow",
-                            }
-                            continue
                         full_err = str(traceback.format_exc())
                         coder_config = os.getenv('CODER_CONFIG_FILE', None)
                         err_msg = f'### Sorry!! Failed chat with CODER_CONFIG_FILE: {coder_config} and then run:\n```\nexport CODER_CONFIG_FILE=PATH/coder.json\n```\n\nFailed chat request with provider: ``{provider_id}``\nvllm_api_url:\n```\n{provider.config.base_url}\n```\n\nwith error:\n```\n{full_err}\n```\n'
@@ -737,8 +792,17 @@ class SessionProcessor:
                             err_msg = f'### Sorry!! Please set up a local CODER_CONFIG_FILE:\n```{coder_config}\n```\nand then run:\n```\nexport CODER_CONFIG_FILE=PATH/coder.json\n```\n\nFailed chat request with provider: ``{provider_id}``\nvllm_api_url:\n```\n{provider.config.base_url}\n```\n\nNo local vllm models are configured correctly for chat at this time.'
                             if coder_config is not None:
                                 err_msg = f'### Sorry!! Please set up a local CODER_CONFIG_FILE:\n```\n{coder_config}\n```\nAfter setting up the CODER_CONFIG_FILE then run:\n```\nexport CODER_CONFIG_FILE=PATH/coder.json\n```\n\nFailed chat request with provider: ``{provider_id}``\nvllm_api_url:\n```\n{provider.config.base_url}\n```\n\nNo local vllm models are configured correctly for chat at this time.'
-                        log.error(err_msg)
-                        raise Exception(err_msg)
+                        elif 'Cannot connect to host' in str(e2):
+                            err_msg = f'### Sorry!! Had connection failure reaching provider_id: ``{provider_id}`` with error:\n```\n{full_err}\n```\n'
+                        if await self._try_reactive_compaction(str(e2), compactor):
+                            await self._save()
+                            yield {
+                                "type": "compaction",
+                                "message": "Conversation compacted reactively after context overflow",
+                            }
+                            continue
+                        log.info(err_msg)
+                        raise Exception('Please review the provider chat error log above to fix this issue')
                         yield {"type": "error", "error": f"LLM error: {e2}"}
                         return
 
@@ -878,7 +942,7 @@ class SessionProcessor:
 
                 for tool_call, result in zip(response_tool_calls, results):
                     if isinstance(result, Exception):
-                        log.error(f"### Sorry!! Hit tool_result_error: {tool_call.name} with error:\n\n```\n{str(result)}\n```\n")
+                        log.info(f"### Sorry!! Hit tool_result_error: {tool_call.name} with error:\n\n```\n{str(result)}\n```\n")
                         result = ToolResult(
                             title=f"Error in {tool_call.name}",
                             output="",
@@ -1152,13 +1216,13 @@ class SessionProcessor:
                     )
             except Exception as e:
                 # Defensive — a broken plan subsystem must not block tool use.
-                log.error(f"### Sorry!! Hit plan_mode_check_failed with error:\n\n```\n{str(traceback.format_exc())}\n```\n")
+                log.info(f"### Sorry!! Hit plan_mode_check_failed with error:\n\n```\n{str(traceback.format_exc())}\n```\n")
 
         if permission_needed and not auto_approve and approval_callback is not None:
             try:
                 decision = await approval_callback(tool_name, arguments, permission_needed)
             except Exception as e:
-                log.error(f"### Sorry!! Hit approval_callback_failed_with error:\n\n```\n{str(traceback.format_exc())}\n```\n")
+                log.info(f"### Sorry!! Hit approval_callback_failed_with error:\n\n```\n{str(traceback.format_exc())}\n```\n")
                 decision = ApprovalDecision(approved=False)
             if not decision.approved:
                 msg = "user declined this tool call"
@@ -1206,7 +1270,7 @@ class SessionProcessor:
                             f"{permission_needed} (HOOK-MODIFIED — re-approve)",
                         )
                     except Exception as e:
-                        log.error(f"### Sorry!! Hit reapproval_callback_failed_error:\n\n```\n{str(traceback.format_exc())}\n```\n")
+                        log.info(f"### Sorry!! Hit reapproval_callback_failed_error:\n\n```\n{str(traceback.format_exc())}\n```\n")
                         decision = ApprovalDecision(approved=False)
                     if not decision.approved:
                         msg = "user declined modified call"
@@ -1270,7 +1334,7 @@ class SessionProcessor:
             now = utc().strftime('%Y%m%d%H%M%S')
             local_tool_debug_file = f'/tmp/debug_coder_tool_local_tools_{now}.json'
             err = f"### Sorry!! Failed tool: {tool_name} args: {pp(arguments)} execute with error:\n\n```\n{str(traceback.format_exc())}\n```\nurl:\n```\n{self.tool_api_url}\n```\napi_key:\n```\n{self.tool_api_key}\n```\nLocal Tool Definitions stored in the file:\n```\n{local_tool_debug_file}\n```\n"
-            log.error(err)
+            log.info(err)
             result = ToolResult(
                 title=f"Error in {tool_name}",
                 output="",
@@ -1349,7 +1413,7 @@ class SessionProcessor:
             )
         except Exception as e:
             err = f"### Sorry!! Failed log_turn_outcome with error:\n\n```\n{str(traceback.format_exc())}\n```\n"
-            log.error(err)
+            log.info(err)
 
     async def _build_messages(self, budget_snapshot=None, task_snapshot=None) -> list[ProviderMessage]:
         """Build messages for the LLM, including system prompt.
@@ -1434,11 +1498,11 @@ class SessionProcessor:
                             system_prompt += mcp_context
                 except Exception:
                     err = f"### Sorry!! Failed mcp_context_loading_with_error:\n\n```\n{str(traceback.format_exc())}\n```\n"
-                    log.error(err)
+                    log.info(err)
                     pass
         except Exception:
             err = f"### Sorry!! Failed mcp_loading_with_error:\n\n```\n{str(traceback.format_exc())}\n```\n"
-            log.error(err)
+            log.info(err)
             pass
 
         messages.append(ProviderMessage(role="system", content=system_prompt))

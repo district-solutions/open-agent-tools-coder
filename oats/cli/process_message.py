@@ -33,12 +33,13 @@ async def process_message(
     session: Session,
     auto_approve: bool = True,
     images: list[dict[str, str]] | None = None,
+    max_tokens: int = 8192,
 ) -> str:
     """Process a single message through the session processor, streaming output."""
     provider_id, model_id = _get_provider_display()
     uid = str(uuid.uuid4()).replace('-', '')
     now = utc()
-    tid = f'interactive_{now.strftime("%Y%m%d%H%M%S")}_{uid[:8]}'
+    tid = f'oats_{now.strftime("%Y%m%d%H%M%S")}_{uid[:8]}'
 
     final_text = ""
     tool_call_count = 0
@@ -52,7 +53,7 @@ async def process_message(
     try:
         async for event in processor.process_message(
             message, auto_approve_tools=auto_approve,
-            max_tokens=8192, images=images,
+            max_tokens=max_tokens, images=images,
         ):
             etype = event.get("type")
 
@@ -155,6 +156,3 @@ async def process_message(
     console.print(f"\n  [dim]{' · '.join(stats_parts)}[/dim]")
 
     return final_text
-
-
-
