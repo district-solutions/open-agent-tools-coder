@@ -308,6 +308,16 @@ Requires an appropriate language server installed locally for the file type.
         return str(contents)
 
     def _format_locations(self, result: Any) -> str:
+        """Format definition or references locations into a readable list.
+
+        Each location is rendered as ``file_path:line:column``.
+
+        Args:
+            result: A single location dict or a list of location dicts.
+
+        Returns:
+            A newline-separated list of location strings.
+        """
         if isinstance(result, dict):
             result = [result]
         if not isinstance(result, list) or not result:
@@ -328,6 +338,17 @@ Requires an appropriate language server installed locally for the file type.
         return "\n".join(lines)
 
     def _format_document_symbols(self, result: Any) -> str:
+        """Format document symbols into a hierarchical tree.
+
+        Walks the symbol tree recursively, indenting children and showing
+        the symbol kind and line number.
+
+        Args:
+            result: A list of document symbol dicts.
+
+        Returns:
+            A formatted tree of symbols.
+        """
         if not isinstance(result, list) or not result:
             return "No symbols found."
         lines: list[str] = []
@@ -351,6 +372,16 @@ Requires an appropriate language server installed locally for the file type.
         return "\n".join(lines)
 
     def _format_workspace_symbols(self, result: Any) -> str:
+        """Format workspace symbols into a flat list.
+
+        Shows up to 100 symbols with their name, kind, file path, and line number.
+
+        Args:
+            result: A list of workspace symbol dicts.
+
+        Returns:
+            A formatted list of workspace symbols.
+        """
         if not isinstance(result, list) or not result:
             return "No workspace symbols found."
         lines = []

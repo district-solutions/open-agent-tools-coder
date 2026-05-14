@@ -109,7 +109,16 @@ Returns search results with titles, URLs, and snippets."""
     async def _search_serpapi(
         self, query: str, num_results: int, api_key: str
     ) -> ToolResult:
-        """Search using SerpAPI."""
+        """Search using the SerpAPI backend.
+
+        Args:
+            query: The search query string.
+            num_results: Maximum number of results to return.
+            api_key: The SerpAPI API key.
+
+        Returns:
+            A :class:`ToolResult` with the search results.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
                 response = await client.get(
@@ -143,7 +152,16 @@ Returns search results with titles, URLs, and snippets."""
     async def _search_brave(
         self, query: str, num_results: int, api_key: str
     ) -> ToolResult:
-        """Search using Brave Search API."""
+        """Search using the Brave Search API backend.
+
+        Args:
+            query: The search query string.
+            num_results: Maximum number of results to return.
+            api_key: The Brave Search API key.
+
+        Returns:
+            A :class:`ToolResult` with the search results.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
                 response = await client.get(
@@ -174,7 +192,16 @@ Returns search results with titles, URLs, and snippets."""
     async def _search_tavily(
         self, query: str, num_results: int, api_key: str
     ) -> ToolResult:
-        """Search using Tavily API."""
+        """Search using the Tavily API backend.
+
+        Args:
+            query: The search query string.
+            num_results: Maximum number of results to return.
+            api_key: The Tavily API key.
+
+        Returns:
+            A :class:`ToolResult` with the search results.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
                 response = await client.post(
@@ -206,7 +233,17 @@ Returns search results with titles, URLs, and snippets."""
             )
 
     async def _search_duckduckgo(self, query: str, num_results: int) -> ToolResult:
-        """Search using DuckDuckGo (no API key required)."""
+        """Search using the DuckDuckGo instant answer API (no API key required).
+
+        Returns limited results — primarily an abstract and related topics.
+
+        Args:
+            query: The search query string.
+            num_results: Maximum number of results to return.
+
+        Returns:
+            A :class:`ToolResult` with the search results.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
                 # Use DuckDuckGo instant answer API
@@ -260,7 +297,18 @@ Returns search results with titles, URLs, and snippets."""
     def _format_results(
         self, query: str, results: list[dict[str, str]], source: str
     ) -> ToolResult:
-        """Format search results as output."""
+        """Format search results into a :class:`ToolResult`.
+
+        Each result is rendered as a numbered entry with title, URL, and snippet.
+
+        Args:
+            query: The original search query.
+            results: A list of result dicts with ``title``, ``url``, and ``snippet``.
+            source: The name of the search backend used.
+
+        Returns:
+            A :class:`ToolResult` with the formatted results.
+        """
         if not results:
             return ToolResult(
                 title="WebSearch",

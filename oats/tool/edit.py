@@ -31,10 +31,18 @@ def _fuzzy_find_best_match(
 ) -> tuple[str, float] | None:
     """Find the substring in *content* that best matches *old_string*.
 
-    We slide a window over the file lines whose height equals the number of
-    lines in old_string (+/- 2 lines tolerance) and score each candidate with
-    ``SequenceMatcher``.  Returns ``(best_candidate, ratio)`` when the ratio
-    exceeds *threshold*, otherwise ``None``.
+    Slides a window over the file lines whose height equals the number of
+    lines in ``old_string`` (+/- 2 lines tolerance) and scores each candidate
+    with ``SequenceMatcher``.
+
+    Args:
+        content: The full file content.
+        old_string: The target string to match against.
+        threshold: Minimum similarity ratio to accept (default 0.80).
+
+    Returns:
+        ``(best_candidate, ratio)`` if a match exceeds the threshold,
+        otherwise ``None``.
     """
     old_lines = old_string.splitlines(keepends=True)
     content_lines = content.splitlines(keepends=True)
@@ -65,13 +73,20 @@ def _fuzzy_find_best_match(
 
 
 def _apply_write_swap(content: str, old_string: str, new_string: str) -> str | None:
-    """Last-resort strategy: try line-level diff heuristics to figure out
-    where old_string was *intended* to go and splice new_string in.
+    """Last-resort strategy: rebuild the file with the intended change applied.
 
-    Approach: find the block of lines in *content* whose collective similarity
-    to old_string is highest (no threshold – we pick the best we can find) and
-    replace that block with new_string.  Returns the new file content, or
-    ``None`` if we truly cannot find any plausible location.
+    Finds the block of lines in *content* whose collective similarity to
+    ``old_string`` is highest (no threshold — picks the best available) and
+    replaces that block with ``new_string``.
+
+    Args:
+        content: The full file content.
+        old_string: The intended old text (may not match exactly).
+        new_string: The replacement text.
+
+    Returns:
+        The new file content, or ``None`` if no plausible location is found
+        (similarity below 50%).
     """
     old_lines = old_string.splitlines(keepends=True)
     content_lines = content.splitlines(keepends=True)
@@ -411,8 +426,6 @@ Use replace_all=true to replace all occurrences."""
         Returns:
             A :class:`ToolResult` with the edit result.
         """
-    ) -> ToolResult:
-        """Apply an exact-match replacement (the original primary path)."""
         occurrences = content.count(old_string)
 
         if not replace_all and occurrences > 1:

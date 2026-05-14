@@ -96,9 +96,16 @@ _SESSION_TOKEN_RE = re.compile(
 
 
 def _first_aws_tokens(command: str) -> tuple[str, list[str]] | None:
-    """Return (binary, args) if command invokes `aws`, else None.
+    """Return ``(binary, args)`` if the command invokes ``aws``, else ``None``.
 
-    Uses shlex so we skip over env-var prefixes like `AWS_REGION=us-east-1 aws ...`.
+    Uses ``shlex.split`` so we skip over env-var prefixes like
+    ``AWS_REGION=us-east-1 aws ...``.
+
+    Args:
+        command: The full shell command string.
+
+    Returns:
+        A tuple of ``(aws_binary, remaining_args)`` or ``None``.
     """
     try:
         tokens = shlex.split(command)

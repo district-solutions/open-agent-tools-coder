@@ -209,7 +209,26 @@ class AgentTool(Tool):
         working_dir: str | None = None,
         worktree_path: Path | None = None,
     ) -> ToolResult:
-        """Run a sub-agent to completion."""
+        """Run a sub-agent to completion and return its result.
+
+        Creates a new session for the sub-agent with the appropriate tool set
+        based on agent type. The sub-agent runs its own agent loop and returns
+        the final result. If running in background mode, the result is cached
+        for later retrieval via :class:`AgentStatusTool`.
+
+        Args:
+            agent_id: Unique identifier for this sub-agent.
+            prompt: The task description for the sub-agent.
+            agent_type: Controls which tools the sub-agent has access to.
+            ctx: The parent tool execution context.
+            model_override: Optional model ID override.
+            provider_override: Optional provider ID override.
+            working_dir: Optional working directory override.
+            worktree_path: Optional git worktree path for isolation.
+
+        Returns:
+            A :class:`ToolResult` with the sub-agent's output.
+        """
         try:
             # Lazy imports to avoid circular dependencies
             from oats.session.session import create_session, Session
@@ -336,10 +355,19 @@ class AgentTool(Tool):
             _background_results[agent_id] = result
             return result
 
-    def _build_agent_system_prefix(self, agent_type: AgentType) -> str:
-        """Build a system prompt prefix based on agent type."""
-        prefixes = {
-            AgentType.GENERAL: (
+    def _build_system_prompt(self, agent_type: AgentType) -> str:
+        """Build a system prompt prefix based on the agent type.
+
+        Each agent type gets a tailored instruction set that constrains its
+        behavior (e.g., read-only for explore, planning-focused for plan).
+
+        Args:
+            agent_type: The type of sub-agent.
+
+        Returns:
+            A system prompt string.
+        """
+        prefixes = {            AgentType.GENERAL: (
                 "You are a sub-agent handling a delegated task. "
                 "Complete the task thoroughly and return a clear summary of your findings or actions."
             ),
@@ -393,6 +421,18 @@ class AgentStatusTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Check the status and results of a background sub-agent.
+
+        Looks up the agent by ID in the background results cache. If the agent
+        has completed, returns its result. If still running, reports status.
+
+        Args:
+            args: Must contain ``agent_id`` (str).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the agent status and optionally its output.
+        """
         agent_id = args.get("agent_id", "")
 
         if not agent_id:

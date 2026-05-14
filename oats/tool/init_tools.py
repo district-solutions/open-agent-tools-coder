@@ -1,5 +1,15 @@
 """
-Default tool system for an ai agent
+Tool initialization and registration for the OATS agent framework.
+
+This module imports all available tools and provides the :func:`init_tools`
+function to register them based on the active feature profile. The profile
+is controlled via the ``CODER_PROFILE`` environment variable
+(minimal | standard | full | custom), with individual feature groups
+overridable via ``CODER_FEATURE_<GROUP>=0|1``.
+
+Core tools (read, write, edit, glob, grep, bash, patch) are always loaded.
+Additional tool groups (web, planning, memory, agents, LSP, MCP) are
+registered conditionally based on feature flags.
 """
 from __future__ import annotations
 

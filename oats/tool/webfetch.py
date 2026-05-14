@@ -151,7 +151,18 @@ The content is converted to plain text/markdown for easier processing."""
             )
 
     def _html_to_text(self, html: str) -> str:
-        """Convert HTML to plain text with basic markdown formatting."""
+        """Convert HTML to plain text with basic markdown formatting.
+
+        Strips script/style elements, converts headers, links, bold, italic,
+        code blocks, lists, and paragraphs to markdown equivalents. Removes
+        remaining HTML tags and decodes common HTML entities.
+
+        Args:
+            html: The raw HTML content.
+
+        Returns:
+            The text content with basic markdown formatting.
+        """
         # Remove script and style elements
         html = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
         html = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)

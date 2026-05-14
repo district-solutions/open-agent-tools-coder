@@ -17,7 +17,15 @@ log = cl("tool.multiedit")
 
 @dataclass
 class PatchHunk:
-    """A single hunk from a patch."""
+    """A single hunk from a unified diff patch.
+
+    Attributes:
+        old_start: Starting line number in the original file (1-based).
+        old_count: Number of lines in the original file for this hunk.
+        new_start: Starting line number in the new file (1-based).
+        new_count: Number of lines in the new file for this hunk.
+        lines: The hunk body lines (prefixed with ``+``, ``-``, or `` ``).
+    """
 
     old_start: int
     old_count: int
@@ -28,7 +36,15 @@ class PatchHunk:
 
 @dataclass
 class FilePatch:
-    """Patch for a single file."""
+    """Patch metadata for a single file.
+
+    Attributes:
+        old_path: Path in the original file (from ``---`` line).
+        new_path: Path in the new file (from ``+++`` line).
+        hunks: List of :class:`PatchHunk` objects for this file.
+        is_new: ``True`` if this is a new file (old path is ``/dev/null``).
+        is_deleted: ``True`` if this is a deleted file (new path is ``/dev/null``).
+    """
 
     old_path: str
     new_path: str

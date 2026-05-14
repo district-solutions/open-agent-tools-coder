@@ -16,7 +16,21 @@ log = cl('tool.registry')
 
 
 class ToolContext(BaseModel):
-    """Context passed to tool execution."""
+    """Context passed to every tool execution.
+
+    Carries session identity, directory paths, and optional state
+    (file cache, agent nesting info) that tools may need.
+
+    Attributes:
+        session_id: Unique identifier for the current session.
+        project_dir: Root directory of the project.
+        working_dir: Current working directory for the tool.
+        user_confirmed: Whether the user has confirmed this action.
+        parent_session_id: ID of the parent session (for sub-agents).
+        agent_depth: Current nesting depth of sub-agents.
+        max_agent_depth: Maximum allowed sub-agent nesting depth.
+        file_cache: Optional file state cache set by the session processor.
+    """
 
     session_id: str
     project_dir: Path
@@ -37,7 +51,15 @@ class ToolContext(BaseModel):
 
 @dataclass
 class ToolResult:
-    """Result from tool execution."""
+    """Result returned by a tool after execution.
+
+    Attributes:
+        title: Short title for the result (shown in the UI).
+        output: The main output text.
+        metadata: Arbitrary key-value pairs for additional context.
+        error: Error message if the tool failed.
+        attachments: List of attachment dicts (files, images, etc.).
+    """
 
     title: str
     output: str
@@ -47,7 +69,16 @@ class ToolResult:
 
 
 class Tool(ABC):
-    """Base class for all tools."""
+    """Abstract base class for all tools.
+
+    Each tool must implement :meth:`name`, :meth:`description`,
+    :meth:`parameters`, and :meth:`execute`. Optional hooks include
+    :meth:`requires_permission`, :meth:`is_concurrency_safe`, and
+    :meth:`to_definition`.
+
+    Subclasses represent individual capabilities (read, write, edit, bash, etc.)
+    that the agent can invoke during a session.
+    """
 
     @property
     @abstractmethod
@@ -129,17 +160,33 @@ class Tool(ABC):
 
 
 class ToolRegistry:
-    """Registry of available tools."""
+    """Central registry for all available tools.
+
+    Maintains a name→tool mapping and supports lookup by name or alias.
+    Use the module-level convenience functions (:func:`register_tool`,
+    :func:`get_tool`, :func:`list_tools`) to interact with the global instance.
+    """
 
     def __init__(self) -> None:
         self._tools: dict[str, Tool] = {}
 
     def register(self, tool: Tool) -> None:
-        """Register a tool."""
+        """Register a tool under its primary name.
+
+        Args:
+            tool: The :class:`Tool` instance to register.
+        """
         self._tools[tool.name] = tool
 
     def get(self, name: str) -> Tool | None:
-        """Get a tool by name."""
+        """Get a tool by its primary name or any of its aliases.
+
+        Args:
+            name: The tool name or alias to look up.
+
+        Returns:
+            The :class:`Tool` instance, or ``None`` if not found.
+        """
         tool = self._tools.get(name)
         if tool is not None:
             return tool
@@ -149,11 +196,19 @@ class ToolRegistry:
         return None
 
     def list(self) -> list[Tool]:
-        """List all registered tools."""
+        """List all registered tools.
+
+        Returns:
+            A list of all :class:`Tool` instances.
+        """
         return list(self._tools.values())
 
     def to_definitions(self) -> list[dict[str, Any]]:
-        """Get all tool definitions for LLM."""
+        """Get all tool definitions in LLM-compatible format.
+
+        Returns:
+            A list of dicts with ``name``, ``description``, and ``parameters``.
+        """
         return [tool.to_definition() for tool in self._tools.values()]
 
 
@@ -162,7 +217,11 @@ _registry: ToolRegistry | None = None
 
 
 def get_tool_registry() -> ToolRegistry:
-    """Get the global tool registry."""
+    """Get the global tool registry, creating it if necessary.
+
+    Returns:
+        The singleton :class:`ToolRegistry` instance.
+    """
     global _registry
     if _registry is None:
         _registry = ToolRegistry()
@@ -170,15 +229,30 @@ def get_tool_registry() -> ToolRegistry:
 
 
 def register_tool(tool: Tool) -> None:
-    """Register a tool in the global registry."""
+    """Register a tool in the global registry.
+
+    Args:
+        tool: A :class:`Tool` instance to register.
+    """
     get_tool_registry().register(tool)
 
 
 def get_tool(name: str) -> Tool | None:
-    """Get a tool by name."""
+    """Get a tool by name or alias from the global registry.
+
+    Args:
+        name: The tool name or alias to look up.
+
+    Returns:
+        The :class:`Tool` instance, or ``None`` if not found.
+    """
     return get_tool_registry().get(name)
 
 
 def list_tools() -> list[Tool]:
-    """List all registered tools."""
+    """List all registered tools.
+
+    Returns:
+        A list of all :class:`Tool` instances in the global registry.
+    """
     return get_tool_registry().list()

@@ -179,7 +179,17 @@ Do NOT use bash for:
             )
 
     def _truncate_output(self, output: str) -> tuple[str, bool]:
-        """Truncate output if it exceeds limits."""
+        """Truncate command output if it exceeds byte or line limits.
+
+        Enforces MAX_OUTPUT_BYTES (byte limit) and MAX_OUTPUT_LINES (line limit).
+        Appends a truncation notice if either limit is hit.
+
+        Args:
+            output: The raw command output.
+
+        Returns:
+            A tuple of ``(truncated_output, was_truncated)``.
+        """
         truncated = False
 
         # Check byte limit

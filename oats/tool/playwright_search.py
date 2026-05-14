@@ -172,6 +172,18 @@ class PlaywrightSearchTool(Tool):
         return ["search", "web", "google", "duckduckgo", "find", "lookup"]
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Search the web using a headless Chromium browser.
+
+        Delegates to :func:`playwright_search` which tries Bing first, then
+        DuckDuckGo as a fallback.
+
+        Args:
+            args: Must contain ``query`` (str). May contain ``num_results`` (int, default 5).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with search results or an error message.
+        """
         query = args.get("query", "")
         num_results = min(args.get("num_results", 5), 10)
 

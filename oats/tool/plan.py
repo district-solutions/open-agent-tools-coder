@@ -343,11 +343,25 @@ class PlanStatusTool(Tool):
 
 
 async def is_planning_mode(session_id: str) -> bool:
-    """Check if a session is currently in planning mode."""
+    """Check if a session is currently in planning mode.
+
+    Args:
+        session_id: The session identifier.
+
+    Returns:
+        ``True`` if the session has an active planning state.
+    """
     state = await _plan_storage.get(session_id)
     return state is not None and state.get("active", False)
 
 
 async def get_plan_state(session_id: str) -> dict[str, Any] | None:
-    """Get the planning state for a session."""
+    """Get the full planning state for a session.
+
+    Args:
+        session_id: The session identifier.
+
+    Returns:
+        The planning state dict, or ``None`` if no state exists.
+    """
     return await _plan_storage.get(session_id)

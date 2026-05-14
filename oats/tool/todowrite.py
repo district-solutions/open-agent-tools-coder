@@ -14,7 +14,14 @@ log = cl('tool.todo')
 
 
 class TodoItem(BaseModel):
-    """A todo item."""
+    """A single task item in the todo list.
+
+    Attributes:
+        content: The task description in imperative form.
+        status: Current status — ``pending``, ``in_progress``, or ``completed``.
+        active_form: Present tense description of what is being done
+            (e.g., "Implementing feature").
+    """
 
     content: str
     status: Literal["pending", "in_progress", "completed"]
@@ -22,7 +29,11 @@ class TodoItem(BaseModel):
 
 
 class TodoList(BaseModel):
-    """List of todos for a session."""
+    """List of todo items for a session.
+
+    Attributes:
+        items: The list of :class:`TodoItem` objects.
+    """
 
     items: list[TodoItem] = Field(default_factory=list)
 

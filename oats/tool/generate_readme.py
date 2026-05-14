@@ -56,7 +56,16 @@ Example: generate_readme path=./oats/cli
         }
 
     def _extract_module_docstring(self, file_path: Path) -> str:
-        """Extract docstring from a Python module."""
+        """Extract the module-level docstring from a Python file.
+
+        Parses the file's AST and retrieves the top-level docstring.
+
+        Args:
+            file_path: Path to the Python file.
+
+        Returns:
+            The module docstring as a string, or an empty string if not found.
+        """
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
@@ -76,7 +85,17 @@ Example: generate_readme path=./oats/cli
             return ""
 
     def _get_module_info(self, file_path: Path) -> dict[str, str]:
-        """Get basic information about a Python module."""
+        """Get basic information about a Python module.
+
+        Extracts the module name and docstring. If no docstring is found,
+        infers a description from the filename.
+
+        Args:
+            file_path: Path to the Python file.
+
+        Returns:
+            A dict with keys ``name``, ``docstring``, and ``path``.
+        """
         try:
             # Get module name without extension
             module_name = file_path.stem
@@ -104,7 +123,18 @@ Example: generate_readme path=./oats/cli
             }
 
     def _analyze_directory(self, directory_path: Path) -> dict[str, Any]:
-        """Analyze a directory to get information about its Python modules."""
+        """Analyze a directory to gather information about its Python modules.
+
+        Recursively finds all ``.py`` files, extracts module docstrings, and
+        returns a summary dict.
+
+        Args:
+            directory_path: The directory to analyze.
+
+        Returns:
+            A dict with keys ``directory``, ``modules`` (list of module info dicts),
+            and ``total_modules``.
+        """
         modules = []
         python_files = list(directory_path.rglob("*.py"))
 
@@ -124,7 +154,21 @@ Example: generate_readme path=./oats/cli
         return {"directory": str(directory_path), "modules": modules, "total_modules": len(modules)}
 
     def _generate_readme_content(self, directory_info: dict[str, Any]) -> str:
-        """Generate README.md content for a directory."""
+        """Generate README.md content for a directory based on module analysis.
+
+        Produces a markdown document with:
+        - An overview section with a module count
+        - A table of modules and their descriptions
+        - Detailed module descriptions
+        - Usage examples
+
+        Args:
+            directory_info: A dict from :meth:`_analyze_directory` with keys
+                ``directory``, ``modules``, and ``total_modules``.
+
+        Returns:
+            The README content as a markdown string.
+        """
         directory = directory_info["directory"]
         modules = directory_info["modules"]
 
@@ -248,7 +292,11 @@ Example: generate_readme path=./oats/cli
 
 
 def register_generate_readme_tool() -> None:
-    """Register the README generation tool."""
+    """Register the README generation tool with the global tool registry.
+
+    Creates a :class:`GenerateREADMETool` instance and registers it via
+    :func:`oats.tool.registry.register_tool`.
+    """
     from oats.tool.registry import register_tool
 
     register_tool(GenerateREADMETool())
