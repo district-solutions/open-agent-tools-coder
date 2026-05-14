@@ -34,7 +34,7 @@ from oats.cli.tui.tui_consts import (
 
 def _print_tools(console: Console):
     """Print available tools in a compact grouped format."""
-    from oats.tool import list_tools as _lt
+    from oats.tool.registry import list_tools as _lt
     tools = sorted(_lt(), key=lambda x: x.name)
 
     console.print()
@@ -105,15 +105,15 @@ def _run_git(console: Console, cwd: str, *args: str, max_lines: int = 30) -> str
             output = '\n'.join(lines[:max_lines]) + f'\n  … ({len(lines) - max_lines} more lines)'
         return output
     except Exception as e:
-        console(f"### Sorry!! Failed _run_git with error:\n```\n{traceback.format_exc()}\n```\n")
+        console.print(f"### Sorry!! Failed _run_git with error:\n```\n{traceback.format_exc()}\n```\n")
         return f"error: {e}"
 
 
 def _print_diff(console: Console, cwd: str):
     """Show git diff (staged + unstaged)."""
     console.print()
-    diff = _run_git(cwd, "diff", max_lines=50)
-    staged = _run_git(cwd, "diff", "--staged", max_lines=50)
+    diff = _run_git(console, cwd, "diff", max_lines=50)
+    staged = _run_git(console, cwd, "diff", "--staged", max_lines=50)
 
     if staged:
         console.print(f"  [bold cyan]staged[/bold cyan]")
@@ -131,7 +131,7 @@ def _print_diff(console: Console, cwd: str):
 def _print_log(console: Console, cwd: str):
     """Show recent git log."""
     console.print()
-    log_output = _run_git(cwd, "log", "--oneline", "--graph", "-15")
+    log_output = _run_git(console, cwd, "log", "--oneline", "--graph", "-15")
     if log_output:
         console.print(log_output)
     else:

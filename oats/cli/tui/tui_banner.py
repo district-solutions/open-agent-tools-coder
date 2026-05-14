@@ -76,7 +76,7 @@ def _print_banner(console: Console, cwd: str, session_id: str, provider_id: str,
 
 def _print_session_info(console: Console, session: Session, turn_count: int, provider_id: str, model_id: str):
     """Print session details."""
-    from oats.cli.tui_consts import _format_tokens
+    from oats.cli.tui.tui_consts import _format_tokens
     console.print()
     console.print(f"  [dim]session[/dim]   {session.id[:12]}")
     console.print(f"  [dim]title[/dim]     {session.title}")
@@ -88,7 +88,7 @@ def _print_session_info(console: Console, session: Session, turn_count: int, pro
 
 def _print_cost(console: Console, session: Session):
     """Print session token usage."""
-    from oats.cli.tui_consts import _format_tokens
+    from oats.cli.tui.tui_consts import _format_tokens
     total = session.info.total_tokens
     ctx = int(os.getenv('CODER_CTX_LEN', '262100'))
     pct = (total / ctx * 100) if ctx > 0 else 0
@@ -104,7 +104,7 @@ def _print_files(console: Console, processor: SessionProcessor):
     cache = processor._file_cache
     read_files = cache.get_read_files()
     written_files = cache.get_written_files()
-    from oats.cli.tui_consts import SYM_TOOL
+    from oats.cli.tui.tui_consts import SYM_TOOL
 
     console.print()
     if written_files:

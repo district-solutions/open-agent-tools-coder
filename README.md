@@ -12,6 +12,33 @@ Open Agent Tools (oats) enables small-to-large self-hosted ai models to use loca
 
 ![Example Knowledge Graph with Semantic Tree for Litigation Tool-Calling](https://raw.githubusercontent.com/district-solutions/open-agent-tools-coder/refs/heads/main/stack/img/open-agent-tools-example-knowledge-graph-with-an-example-semantic-tree-for-ligitation-tool-calling.jpg)
 
+## Supported Coder Slash Commands
+
+By default if there is no starting ``/`` character in the prompt, then coder treats the message a as chat message.
+
+Here are the supprted internal **slash** commands:
+
+- /help - supported usage
+- /browse - use playwi
+- /mode - change mode
+- /approve - toggle auto approval mode
+- /clear - clear the session
+- /session - view the session
+- /cost - view token usage
+- /config - view the config
+- /profile - view the coder profile feature flags
+- /files - view the current files
+- /diff - view the git diff for the repo (assuming coder is running in a git repo)
+- /log - view the logs
+- /history - view the chat history
+- /tools - view the default tools
+- /model - view the current provider model
+- /models - view the models
+- /new - new session
+- /switch - switch provider
+- /provider - view the current provider
+- /compact - compact the chat sesssion for reducing token context windows. this is automatically done already but this command allows for manual context control.
+
 ## Install
 
 Here is a recording showing how to install and get started quickly:

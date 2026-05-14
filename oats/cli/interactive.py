@@ -276,17 +276,17 @@ async def run_interactive(
 
             elif cmd == "/clear":
                 console.clear()
-                from oats.cli.tui.tui_utils import _print_banner
+                from oats.cli.tui.tui_banner import _print_banner
                 _print_banner(console=console, cwd=cwd, session_id=session.id, provider_id=provider_id, model_id=model_id)
                 continue
 
             elif cmd == "/session":
-                from oats.cli.tui.tui_utils import _print_session_info
+                from oats.cli.tui.tui_banner import _print_session_info
                 _print_session_info(console=console, session=session, turn_count=turn_count, provider_id=provider_id, model_id=model_id)
                 continue
 
             elif cmd == "/cost":
-                from oats.cli.tui.tui_utils import _print_cost
+                from oats.cli.tui.tui_banner import _print_cost
                 _print_cost(console=console, session=session)
                 continue
 
@@ -308,7 +308,7 @@ async def run_interactive(
                 continue
 
             elif cmd == "/files":
-                from oats.cli.tui.tui_utils import _print_files
+                from oats.cli.tui.tui_banner import _print_files
                 _print_files(console=console, processor=processor)
                 continue
 
@@ -333,7 +333,7 @@ async def run_interactive(
                 continue
 
             elif cmd == "/model":
-                from oats.cli.tui.tui_utils import _short_model
+                from oats.cli.tui.tui_consts import _short_model
                 console.print(f"  [dim]provider:[/dim] {provider_id}")
                 console.print(f"  [dim]model:[/dim]    {_short_model(model_id)}")
                 continue
@@ -353,7 +353,7 @@ async def run_interactive(
                 continue
 
             elif cmd == "/models":
-                from oats.provider import list_models as _lm
+                from oats.provider.models import list_models as _lm
                 models_list = _lm()
                 current_provider = None
                 console.print()
@@ -367,7 +367,7 @@ async def run_interactive(
                 continue
 
             elif cmd == "/switch":
-                from oats.cli.tui.tui_utils import _short_model
+                from oats.cli.tui.tui_consts import _short_model
                 parts = user_input.split(maxsplit=1)
                 if len(parts) < 2:
                     console.print(f"  [yellow]usage: /switch <model_id>[/yellow]")
