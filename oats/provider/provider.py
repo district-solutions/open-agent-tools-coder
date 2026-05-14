@@ -53,7 +53,17 @@ _RETRYABLE_ERROR_SUBSTRINGS = [
 
 
 def _is_retryable(exc: Exception) -> bool:
-    """Decide if an LLM call error is transient and worth retrying."""
+    """Decide if an LLM call error is transient and worth retrying.
+
+    Checks for known retryable HTTP status codes (429, 5xx) and common
+    transient error message substrings.
+
+    Args:
+        exc: The exception raised by the LLM provider.
+
+    Returns:
+        True if the error is considered transient and retryable.
+    """
     exc_str = str(exc).lower()
 
     # Check for HTTP status codes embedded in the exception
@@ -70,7 +80,14 @@ def _is_retryable(exc: Exception) -> bool:
 
 
 def _backoff_delay(attempt: int) -> float:
-    """Exponential backoff with jitter: base * 2^attempt + random jitter."""
+    """Exponential backoff with jitter: base * 2^attempt + random jitter.
+
+    Args:
+        attempt: The zero-based retry attempt number.
+
+    Returns:
+        The delay in seconds before the next retry.
+    """
     import random
     delay = min(INITIAL_BACKOFF_S * (2 ** attempt), MAX_BACKOFF_S)
     jitter = random.uniform(0, delay * 0.25)
@@ -217,7 +234,15 @@ _registry: ProviderRegistry | None = None
 
 
 class Message(BaseModel):
-    """A chat message."""
+    """A chat message in a conversation.
+
+    Attributes:
+        role: The role of the message sender ("system", "user", "assistant", "tool").
+        content: The message content as a string or a list of content blocks (for multimodal).
+        name: Optional name for the message sender.
+        tool_call_id: ID of the tool call this message is responding to.
+        tool_calls: List of tool calls made by the assistant.
+    """
 
     role: str  # "system", "user", "assistant", "tool"
     content: str | list[dict[str, Any]]
@@ -227,7 +252,14 @@ class Message(BaseModel):
 
 
 class ToolDefinition(BaseModel):
-    """Definition of a tool for the LLM."""
+    """Definition of a tool for the LLM.
+
+    Attributes:
+        name: The tool's function name.
+        description: Human-readable description of what the tool does.
+        parameters: JSON Schema describing the tool's input parameters.
+        strict: Whether to enforce strict schema validation.
+    """
 
     name: str
     description: str
@@ -236,7 +268,20 @@ class ToolDefinition(BaseModel):
 
 
 class CompletionRequest(BaseModel):
-    """Request for a completion."""
+    """Request for a completion from an LLM provider.
+
+    Attributes:
+        messages: The conversation history as a list of Message objects.
+        model: Optional model ID override. Falls back to config default.
+        provider_id: Optional provider ID override.
+        tools: Optional list of tool definitions for function calling.
+        temperature: Sampling temperature for generation.
+        max_tokens: Maximum number of tokens to generate.
+        top_p: Nucleus sampling threshold.
+        stop: List of stop sequences to halt generation.
+        stream: Whether to stream the response.
+        debug_context: Optional metadata for debugging and tracing.
+    """
 
     messages: list[Message]
     model: str | None = None
@@ -251,7 +296,13 @@ class CompletionRequest(BaseModel):
 
 
 class ToolCall(BaseModel):
-    """A tool call from the LLM."""
+    """A tool call from the LLM.
+
+    Attributes:
+        id: Unique identifier for this tool call.
+        name: The name of the tool/function to invoke.
+        arguments: JSON string of the tool's input arguments.
+    """
 
     id: str
     name: str
@@ -259,7 +310,15 @@ class ToolCall(BaseModel):
 
 
 class CompletionResponse(BaseModel):
-    """Response from a completion."""
+    """Response from a non-streamed completion.
+
+    Attributes:
+        content: The text content of the response, or None if tool calls were made.
+        tool_calls: List of tool calls requested by the model.
+        finish_reason: Reason the model stopped generating (e.g. "stop", "tool_calls").
+        usage: Token usage statistics (prompt, completion, total).
+        model: The model that generated the response.
+    """
 
     content: str | None = None
     tool_calls: list[ToolCall] | None = None
@@ -269,7 +328,13 @@ class CompletionResponse(BaseModel):
 
 
 class CompletionChunk(BaseModel):
-    """A streaming chunk from a completion."""
+    """A streaming chunk from a completion.
+
+    Attributes:
+        content: A fragment of text content, or None.
+        tool_calls: Tool calls assembled from the stream, if any.
+        finish_reason: Reason the stream ended, if this is the final chunk.
+    """
 
     content: str | None = None
     tool_calls: list[ToolCall] | None = None
@@ -278,10 +343,17 @@ class CompletionChunk(BaseModel):
 
 @dataclass
 class Provider:
-    """
-    An AI provider (Anthropic, OpenAI, etc.).
+    """An AI provider (Anthropic, OpenAI, etc.).
 
-    Uses LiteLLM for actual API calls.
+    Wraps LiteLLM to provide a unified interface for calling LLMs across
+    multiple providers. Handles authentication, model resolution, retry
+    logic, and tool call parsing.
+
+    Attributes:
+        id: Unique provider identifier (e.g. "openai", "anthropic").
+        name: Human-readable provider name.
+        config: Provider-specific configuration (API keys, base URLs, etc.).
+        models: List of models available from this provider.
     """
 
     id: str
@@ -290,7 +362,15 @@ class Provider:
     models: list[Model] = field(default_factory=list)
 
     def is_configured(self) -> bool:
-        """Check if the provider has required configuration."""
+        """Check if the provider has required configuration.
+
+        For OpenWebUI providers, attempts login and retrieves an API token.
+        For Ollama, always returns True (no API key required).
+        For all other providers, checks that an API key is set.
+
+        Returns:
+            True if the provider is ready to make API calls.
+        """
         if self.id in ['ow']:
             try:
                 if self.config.email is None:
@@ -317,7 +397,17 @@ class Provider:
             return self.config.api_key is not None
 
     def _resolve_litellm_model(self, model_id: str) -> str:
-        """Resolve the LiteLLM model string from provider ID and model ID."""
+        """Resolve the LiteLLM model string from provider ID and model ID.
+
+        Looks up the model in the global registry first. If not found,
+        applies provider-specific prefixes (e.g. "ollama/", "gemini/").
+
+        Args:
+            model_id: The model identifier to resolve.
+
+        Returns:
+            The fully qualified LiteLLM model string.
+        """
         model = get_model(self.id, model_id)
         if model is not None:
             return model.litellm_model
@@ -336,7 +426,19 @@ class Provider:
         return f"{prefix}{model_id}"
 
     def _build_kwargs(self, request: CompletionRequest, litellm_model: str) -> dict[str, Any]:
-        """Build the kwargs dict for LiteLLM acompletion call."""
+        """Build the kwargs dict for LiteLLM acompletion call.
+
+        Translates a CompletionRequest into the keyword arguments expected
+        by LiteLLM, including messages, tools, temperature, and other
+        generation parameters.
+
+        Args:
+            request: The completion request to translate.
+            litellm_model: The resolved LiteLLM model string.
+
+        Returns:
+            A dict of keyword arguments for litellm.acompletion().
+        """
         # Build messages
         messages = []
         for m in request.messages:
@@ -444,11 +546,21 @@ class Provider:
         return response_content, tool_calls
 
     async def complete(self, request: CompletionRequest, verbose: bool = True) -> CompletionResponse:
-        """
-        Get a completion from the provider with retry logic.
+        """Get a completion from the provider with retry logic.
 
         Retries transient errors (rate limits, 5xx, timeouts) with
-        exponential backoff + jitter.
+        exponential backoff + jitter. Publishes request and response
+        events to the event bus for observability.
+
+        Args:
+            request: The completion request containing messages, model, tools, etc.
+            verbose: If True, log the request details.
+
+        Returns:
+            A CompletionResponse with content, tool calls, and usage stats.
+
+        Raises:
+            Exception: If all retry attempts are exhausted.
         """
         model_id = request.model or get_config().model.model_id
         litellm_model = self._resolve_litellm_model(model_id)
@@ -552,12 +664,23 @@ class Provider:
         raise last_error  # type: ignore[misc]
 
     async def stream(self, request: CompletionRequest, verbose: bool = False) -> AsyncIterator[CompletionChunk]:
-        """
-        Stream a completion from the provider with retry logic.
+        """Stream a completion from the provider with retry logic.
 
         Yields chunks as they arrive from the LLM. For tool calls that
         arrive as text content (open-source models), the final chunk
-        will contain the parsed tool calls.
+        will contain the parsed tool calls. Publishes request and
+        response events to the event bus.
+
+        Args:
+            request: The completion request (stream=True is enforced).
+            verbose: If True, log the request details.
+
+        Yields:
+            CompletionChunk objects containing content fragments, tool calls,
+            and finish reasons.
+
+        Raises:
+            Exception: If all retry attempts are exhausted.
         """
         model_id = request.model or get_config().model.model_id
         litellm_model = self._resolve_litellm_model(model_id)
@@ -730,30 +853,62 @@ class Provider:
 
 
 class ProviderRegistry:
-    """Registry of available providers."""
+    """Registry of available AI providers.
+
+    Maintains a central index of all registered providers, keyed by
+    provider ID. Initialized with built-in provider definitions on
+    first access via :func:`get_provider_registry`.
+    """
 
     def __init__(self) -> None:
+        """Initialize an empty provider registry."""
         self._providers: dict[str, Provider] = {}
 
     def register(self, provider: Provider) -> None:
-        """Register a provider."""
+        """Register a provider in the registry.
+
+        Args:
+            provider: The provider to register.
+        """
         self._providers[provider.id] = provider
 
     def get(self, provider_id: str) -> Provider | None:
-        """Get a provider by ID."""
+        """Get a provider by ID.
+
+        Args:
+            provider_id: The provider identifier (e.g. "openai").
+
+        Returns:
+            The Provider if found, or None.
+        """
         return self._providers.get(provider_id)
 
     def list(self) -> list[Provider]:
-        """List all providers."""
+        """List all registered providers.
+
+        Returns:
+            A list of all Provider instances.
+        """
         return list(self._providers.values())
 
     def list_configured(self) -> list[Provider]:
-        """List only configured providers."""
+        """List only configured providers.
+
+        Returns:
+            A list of Provider instances that have valid configuration.
+        """
         return [p for p in self._providers.values() if p.is_configured()]
 
 
 def get_provider_registry() -> ProviderRegistry:
-    """Get the global provider registry, initializing from config if needed."""
+    """Get the global provider registry, initializing from config if needed.
+
+    Lazily initializes a singleton ProviderRegistry on first call,
+    populating it with built-in provider definitions from the config.
+
+    Returns:
+        The global ProviderRegistry instance.
+    """
     global _registry
     if _registry is None:
         _registry = ProviderRegistry()
@@ -762,7 +917,14 @@ def get_provider_registry() -> ProviderRegistry:
 
 
 def _init_providers(registry: ProviderRegistry) -> None:
-    """Initialize providers from configuration."""
+    """Initialize providers from configuration.
+
+    Registers all built-in providers (Anthropic, OpenAI, Google, etc.)
+    with their configuration from the global config object.
+
+    Args:
+        registry: The ProviderRegistry to populate.
+    """
     config = get_config()
 
     # Built-in provider definitions
@@ -796,10 +958,18 @@ def _init_providers(registry: ProviderRegistry) -> None:
         )
 
 def get_provider(provider_id: str | None = None) -> Provider:
-    """
-    Get a provider by ID, or the default provider.
+    """Get a provider by ID, or the default provider.
 
-    Raises ValueError if the provider is not found or not configured.
+    If provider_id is None, uses the default provider from the config.
+
+    Args:
+        provider_id: The provider identifier. If None, uses the config default.
+
+    Returns:
+        The configured Provider instance.
+
+    Raises:
+        ValueError: If the provider is not found or not configured.
     """
     if provider_id is None:
         provider_id = get_config().model.provider_id
@@ -818,5 +988,9 @@ def get_provider(provider_id: str | None = None) -> Provider:
     return provider
 
 def list_providers() -> list[Provider]:
-    """List all available providers."""
+    """List all available providers.
+
+    Returns:
+        A list of all registered Provider instances.
+    """
     return get_provider_registry().list()

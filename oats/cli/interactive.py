@@ -126,6 +126,7 @@ async def run_interactive(
 
     @bindings.add(Keys.Escape, Keys.Enter)
     def _newline(event):
+        """Insert a newline on Alt+Enter instead of submitting."""
         event.current_buffer.insert_text('\n')
 
     prompt_session = PromptSession(
@@ -154,6 +155,7 @@ async def run_interactive(
         _saved_tty = None
 
     def _restore_tty():
+        """Restore the terminal to its saved state and run stty sane."""
         try:
             if _saved_tty is not None and termios is not None:
                 termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, _saved_tty)
@@ -166,6 +168,7 @@ async def run_interactive(
             pass
 
     def _sigint_should_exit() -> bool:
+        """Return True if a second Ctrl+C was pressed within the exit window."""
         import time
         now = time.monotonic()
         recent = (now - _ctrl_c["last_t"]) < _SIGINT_WINDOW
@@ -173,6 +176,7 @@ async def run_interactive(
         return recent
 
     def _sigint_handler():
+        """Handle SIGINT: cancel the current turn or exit on double Ctrl+C."""
         exit_now = _sigint_should_exit()
         t = _turn_task_ref["task"]
         busy = t is not None and not t.done()

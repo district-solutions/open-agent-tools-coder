@@ -57,15 +57,22 @@ class ApprovalManager:
     """Manages the approval flow for tool operations."""
 
     def __init__(self, mode: ApprovalMode = ApprovalMode.AUTO):
+        """Initialize the approval manager with the given mode.
+
+        Args:
+            mode: The operating mode (AUTO, SUPERVISED, or PLAN).
+        """
         self._mode = mode
         self._auto_approved_tools: set[str] = set()
 
     @property
     def mode(self) -> ApprovalMode:
+        """Return the current approval mode."""
         return self._mode
 
     @mode.setter
     def mode(self, value: ApprovalMode):
+        """Set the approval mode, clearing auto-approved tools if switching to AUTO."""
         self._mode = value
         if value == ApprovalMode.AUTO:
             self._auto_approved_tools.clear()
@@ -134,7 +141,7 @@ class ApprovalManager:
         self._auto_approved_tools.add(tool_name)
 
     def reset(self):
-        """Reset to initial state."""
+        """Reset the auto-approved tools set to empty."""
         self._auto_approved_tools.clear()
 
 

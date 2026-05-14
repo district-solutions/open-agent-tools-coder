@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""CLI utility to list and check the configuration status of all available providers.
+
+Prints each provider's name, ID, and whether it is currently configured
+(has valid credentials and endpoint settings).
+"""
 
 import os
 from oats.log import cl

@@ -1,3 +1,10 @@
+"""Terminal UI banner and session information display utilities.
+
+Handles printing the startup banner (with git repo detection, model
+and provider info), session details, token cost summaries, and file
+access logs for the current session.
+"""
+
 import os
 from rich.console import Console
 from oats.cli.tui.tui_consts import SYM_SEP

@@ -1,3 +1,10 @@
+"""Stream a user message through the session processor and render the response in the TUI.
+
+Handles all event types emitted by the processor (text deltas, tool calls,
+tool results, usage stats, compaction, errors, warnings) and displays
+them with appropriate icons, formatting, and a live status indicator.
+"""
+
 import uuid
 import time
 from rich.console import Console

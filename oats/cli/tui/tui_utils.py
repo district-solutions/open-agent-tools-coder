@@ -1,3 +1,11 @@
+"""Terminal UI utility functions for the interactive coder REPL.
+
+Provides helpers for rendering tools, configuration, git diffs/logs,
+session history, web page browsing, think-block filtering, and a
+live animated status tracker. Also includes the slash-command help
+table and various formatting utilities.
+"""
+
 import os
 import sys
 import traceback
@@ -297,14 +305,21 @@ class ThinkFilter:
     _CLOSE = "</think>"
 
     def __init__(self):
+        """Initialize the think filter with an empty buffer."""
         self._buf = ""
         self._think_shown = False
 
     def feed(self, delta: str) -> str:
+        """Feed a text delta and return the filtered output.
+
+        Accumulates the delta in the internal buffer and drains any
+        complete think blocks, returning only non-think content.
+        """
         self._buf += delta
         return self._drain()
 
     def _drain(self) -> str:
+        """Drain the buffer, stripping complete think blocks and emitting safe content."""
         output = ""
         while True:
             open_idx = self._buf.find(self._OPEN)
@@ -342,6 +357,7 @@ class ThinkFilter:
 
     @staticmethod
     def _split_safe(buf: str) -> tuple[str, str]:
+        """Split buffer into safe (no partial tags) and held (partial tag) parts."""
         for tag in ("<think>", "</think>"):
             for length in range(min(len(tag) - 1, len(buf)), 0, -1):
                 if buf.endswith(tag[:length]):
@@ -349,6 +365,7 @@ class ThinkFilter:
         return buf, ""
 
     def flush(self) -> str:
+        """Flush remaining buffer content, stripping any incomplete think blocks."""
         out = ""
         if self._think_shown:
             out += "\r\033[K"
@@ -376,6 +393,11 @@ class _StatusTracker:
     """Animated status line shown while the LLM is generating."""
 
     def __init__(self, console: Console):
+        """Initialize the status tracker with the given Rich console.
+
+        Args:
+            console: The Rich console to render the live status line on.
+        """
         self._start = time.monotonic()
         self._input_tokens = 0
         self._output_tokens = 0
@@ -386,6 +408,7 @@ class _StatusTracker:
         self._console: Console = console
 
     def _render(self) -> Text:
+        """Render the current status line as a Rich Text object."""
         elapsed = time.monotonic() - self._start
         frame = _SPINNER_FRAMES[self._frame % len(_SPINNER_FRAMES)]
         self._frame += 1
@@ -401,6 +424,7 @@ class _StatusTracker:
         return txt
 
     async def _tick(self):
+        """Background loop that updates the live display every 100ms."""
         try:
             while True:
                 if self._live is not None:
@@ -410,11 +434,13 @@ class _StatusTracker:
             pass
 
     def start(self):
+        """Start the animated status line and background tick task."""
         self._live = Live(self._render(), console=self._console, refresh_per_second=10, transient=True)
         self._live.start()
         self._task = asyncio.create_task(self._tick())
 
     def stop(self):
+        """Stop the animated status line and cancel the background tick task."""
         if self._task is not None:
             self._task.cancel()
             self._task = None
@@ -423,9 +449,11 @@ class _StatusTracker:
             self._live = None
 
     def set_phase(self, phase: str):
+        """Set the current phase label (e.g. 'thinking', 'generating')."""
         self._phase = phase
 
     def add_tokens(self, input_tokens: int = 0, output_tokens: int = 0):
+        """Accumulate input and output token counts for display."""
         self._input_tokens += input_tokens
         self._output_tokens += output_tokens
 

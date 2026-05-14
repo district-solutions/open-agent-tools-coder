@@ -11,7 +11,22 @@ from typing import Any
 
 @dataclass
 class Model:
-    """Definition of an AI model."""
+    """Definition of an AI model.
+
+    Attributes:
+        id: Unique model identifier (e.g. "gpt-4o").
+        provider_id: The provider this model belongs to (e.g. "openai", "anthropic").
+        name: Human-readable display name.
+        description: Short description of the model's capabilities.
+        context_length: Maximum number of tokens in the input context window.
+        max_output_tokens: Maximum number of tokens the model can generate in a single response.
+        supports_tools: Whether the model supports function/tool calling.
+        supports_vision: Whether the model supports image/vision input.
+        supports_streaming: Whether the model supports streaming responses.
+        cost_per_input_token: Cost per input token in USD.
+        cost_per_output_token: Cost per output token in USD.
+        extra: Additional provider-specific metadata.
+    """
 
     id: str
     provider_id: str
@@ -29,7 +44,14 @@ class Model:
 
     @property
     def litellm_model(self) -> str:
-        """Get the LiteLLM model identifier."""
+        """Get the LiteLLM model identifier.
+
+        Maps the internal provider/model combination to the format expected
+        by LiteLLM (e.g. "azure/gpt-4o", "gemini/gemini-2.0-flash").
+
+        Returns:
+            The model string to pass to LiteLLM's acompletion().
+        """
         # LiteLLM uses provider/model format for some providers
         if self.provider_id == "ow":
             return f"hosted_vllm/{self.id}"
@@ -59,7 +81,7 @@ class Model:
             return self.id
 
 
-# Built-in model definitions
+# Built-in model definitions — pre-configured models for known providers.
 BUILTIN_MODELS: list[Model] = [
     # Anthropic models
     Model(
@@ -192,33 +214,62 @@ if os.getenv('CODER_DISABLED_CLOUD_MODELS', '0') == '0':
     BUILTIN_MODELS: list[Model] = []
 
 class ModelRegistry:
-    """Registry of available models."""
+    """Registry of available models.
+
+    Maintains a central index of all registered AI models, keyed by
+    ``provider_id/model_id``. Initialized with built-in model definitions
+    on construction.
+    """
 
     def __init__(self) -> None:
+        """Initialize the registry and load built-in models."""
         self._models: dict[str, Model] = {}
         # Load built-in models
         for model in BUILTIN_MODELS:
             self.register(model)
 
     def register(self, model: Model) -> None:
-        """Register a model."""
+        """Register a model in the registry.
+
+        Args:
+            model: The model definition to register.
+        """
         key = f"{model.provider_id}/{model.id}"
         self._models[key] = model
 
     def get(self, provider_id: str, model_id: str) -> Model | None:
-        """Get a model by provider and model ID."""
+        """Get a model by provider and model ID.
+
+        Args:
+            provider_id: The provider identifier (e.g. "openai").
+            model_id: The model identifier (e.g. "gpt-4o").
+
+        Returns:
+            The Model if found, or None.
+        """
         key = f"{provider_id}/{model_id}"
         return self._models.get(key)
 
     def list(self, provider_id: str | None = None) -> list[Model]:
-        """List all models, optionally filtered by provider."""
+        """List all models, optionally filtered by provider.
+
+        Args:
+            provider_id: If provided, only return models from this provider.
+
+        Returns:
+            A list of Model instances.
+        """
         models = list(self._models.values())
         if provider_id:
             models = [m for m in models if m.provider_id == provider_id]
         return models
 
     def list_by_provider(self) -> dict[str, list[Model]]:
-        """List models grouped by provider."""
+        """List models grouped by provider.
+
+        Returns:
+            A dict mapping provider_id to a list of Model instances.
+        """
         result: dict[str, list[Model]] = {}
         for model in self._models.values():
             if model.provider_id not in result:
@@ -232,7 +283,13 @@ _registry: ModelRegistry | None = None
 
 
 def get_model_registry() -> ModelRegistry:
-    """Get the global model registry."""
+    """Get the global model registry.
+
+    Lazily initializes a singleton ModelRegistry on first call.
+
+    Returns:
+        The global ModelRegistry instance.
+    """
     global _registry
     if _registry is None:
         _registry = ModelRegistry()
@@ -240,10 +297,25 @@ def get_model_registry() -> ModelRegistry:
 
 
 def get_model(provider_id: str, model_id: str) -> Model | None:
-    """Get a model by provider and model ID."""
+    """Get a model by provider and model ID.
+
+    Args:
+        provider_id: The provider identifier (e.g. "openai").
+        model_id: The model identifier (e.g. "gpt-4o").
+
+    Returns:
+        The Model if found, or None.
+    """
     return get_model_registry().get(provider_id, model_id)
 
 
 def list_models(provider_id: str | None = None) -> list[Model]:
-    """List all available models."""
+    """List all available models.
+
+    Args:
+        provider_id: If provided, only return models from this provider.
+
+    Returns:
+        A list of all registered Model instances.
+    """
     return get_model_registry().list(provider_id)

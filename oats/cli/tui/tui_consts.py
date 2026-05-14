@@ -1,3 +1,11 @@
+"""Terminal UI constants, environment defaults, and display helpers.
+
+Defines symbols used throughout the TUI (tool icons, status glyphs),
+default environment variables for the coder profile, and utility
+functions for formatting token counts, shortening model IDs, and
+detecting the best image rendering protocol for the current terminal.
+"""
+
 import os
 from rich.console import Console
 
