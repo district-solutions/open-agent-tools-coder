@@ -91,6 +91,7 @@ class PluginManifest(BaseModel):
     @field_validator("id")
     @classmethod
     def _id_is_slug(cls, v: str) -> str:
+        """Validate that the plugin id is a clean slug with no whitespace or path separators."""
         if not v or any(c in v for c in " \t\n/\\"):
             raise ValueError(f"plugin id must be a slug, got {v!r}")
         return v
@@ -105,6 +106,18 @@ class PluginManifest(BaseModel):
 
 
 def _load_one(manifest_path: Path) -> PluginManifest | None:
+    """Load and validate a single plugin manifest from disk.
+
+    Reads the JSON file, validates it against the :class:`PluginManifest`
+    schema, and sets ``source_dir`` on the returned manifest. Returns
+    ``None`` if the file is unreadable or invalid.
+
+    Args:
+        manifest_path: Path to the ``coder.plugin.json`` file.
+
+    Returns:
+        A validated :class:`PluginManifest`, or ``None`` on error.
+    """
     try:
         raw = json.loads(manifest_path.read_text())
     except Exception as e:

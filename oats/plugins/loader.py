@@ -62,6 +62,15 @@ SlashHandler = Callable[[str, SlashContext], Awaitable[None]]
 
 @dataclass
 class SlashCommand:
+    """A user-facing /command registered by a plugin.
+
+    Attributes:
+        name: The command name (e.g. ``/vi``).
+        handler: Async callable ``(args_str, SlashContext) -> None``.
+        help_usage: Short usage string shown in ``/help`` (e.g. ``/vi [path]``).
+        help_desc: Human-readable description of the command.
+        plugin_id: ID of the plugin that registered this command.
+    """
     name: str  # e.g. "/vi"
     handler: SlashHandler
     help_usage: str  # e.g. "/vi [path]"
@@ -95,6 +104,15 @@ class PluginContext:
     manifest: PluginManifest
 
     def register_tool(self, tool: Tool, toolset: str | Iterable[str] | None = None) -> None:
+        """Register a :class:`Tool` with the global tool registry.
+
+        Optionally groups the tool under one or more toolset names.
+        Falls back gracefully if the registry doesn't support toolsets.
+
+        Args:
+            tool: The tool instance to register.
+            toolset: Optional toolset name(s) to associate with the tool.
+        """
         reg = get_tool_registry()
         try:
             reg.register(tool, toolset=toolset)
@@ -110,6 +128,16 @@ class PluginContext:
         members: Iterable[str] | None = None,
         includes: Iterable[str] | None = None,
     ) -> None:
+        """Register a named toolset with the global tool registry.
+
+        A toolset groups related tools so they can be enabled or disabled
+        together. No-op if the registry doesn't support toolsets.
+
+        Args:
+            name: The toolset name.
+            members: Optional list of tool names belonging to this toolset.
+            includes: Optional list of other toolset names to include.
+        """
         reg = get_tool_registry()
         rt = getattr(reg, "register_toolset", None)
         if rt is None:
@@ -153,6 +181,17 @@ class PluginContext:
         matcher: str | None = None,
         name: str | None = None,
     ) -> None:
+        """Register a hook handler on the global :class:`HookEngine`.
+
+        The handler is registered under a name derived from the plugin id
+        and the function's ``__name__`` (or the explicit ``name`` argument).
+
+        Args:
+            event: The hook event to listen for.
+            fn: The async handler callable.
+            matcher: Optional matcher string to scope the handler.
+            name: Optional explicit name for the handler registration.
+        """
         HookEngine.register_global(
             event, fn, matcher=matcher,
             name=name or f"{self.manifest.id}:{getattr(fn, '__name__', 'handler')}",
