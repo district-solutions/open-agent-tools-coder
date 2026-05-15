@@ -12,6 +12,7 @@ from oats.session.message import Message
 
 @dataclass
 class BudgetSnapshot:
+    """Point-in-time snapshot of token budget state."""
     estimated_input_tokens: int
     context_window: int
     remaining_tokens: int
@@ -37,6 +38,7 @@ class SessionTokenBudget:
         messages: list[Message],
         requested_max_tokens: int | None = None,
     ) -> BudgetSnapshot:
+        """Compute the current token budget snapshot and pressure level."""
         estimated_input = self._estimate_tokens(messages)
         remaining = max(0, self.context_window - estimated_input)
 

@@ -1,3 +1,4 @@
+"""Logging utilities for oats."""
 #!/usr/bin/env python3
 
 import os
@@ -15,6 +16,7 @@ class Lg:
     """
 
     def __init__(self, name: str = "lg", colors_enabled: bool | None = None, file: str | None = None) -> None:
+        """Initialize the logger with the given name and options."""
         from rich.console import Console
         self.console = Console()
         self.file = file
@@ -100,45 +102,59 @@ class Lg:
                 print(f"{timestamp} - {self.name} - {level} - {m}", flush=True)
 
     def debug(self, m: str) -> None:
+        """Log a debug-level message."""
         self.log("DEBUG", m)
 
     def info(self, m: str) -> None:
+        """Log an info-level message."""
         self.log("INFO", m)
 
     def warn(self, m: str) -> None:
+        """Log a warning-level message."""
         self.log("WARN", m)
 
     def warning(self, m: str) -> None:
+        """Log a warning-level message."""
         self.log("WARNING", m)
 
     def err(self, m: str) -> None:
+        """Log an error-level message."""
         self.log("ERROR", m)
 
     def error(self, m: str) -> None:
+        """Log an error-level message."""
         self.log("ERROR", m)
 
     def critical(self, m: str) -> None:
+        """Log a critical-level message."""
         self.log("CRITICAL", m)
 
     def good(self, m: str) -> None:
+        """Log a success/good message."""
         self.log("g", m)
 
     def p(self, m: str) -> None:
+        """Log a pass message."""
         self.log("p", m)
 
     def fail(self, m: str) -> None:
+        """Log a failure message."""
         self.log("f", m)
 
     def startup(self, m: str) -> None:
+        """Log a startup message."""
         self.log("s", m)
 
     def agent_log(self, m: str) -> None:
+        """Log an agent-specific message."""
         self.log("AGENTLOG", m)
 
     def get_file(self) -> str | None:
+        """Return the log file path, if set."""
         return self.file
 
     def save_all(self, file: str | None) -> None:
+        """Save all accumulated logs to the configured file."""
         if file is None and self.file is not None:
             file = self.file
         os.makedirs(os.path.dirname(file), exist_ok=True)
@@ -149,6 +165,7 @@ class Lg:
                 f.write(str_logs)
 
     def save(self, file: str | None, num_logs: int = 10, total_len: int = 500, is_append: bool = False) -> None:
+        """Write the last *num_logs* entries to *file* (truncated to *total_len* chars)."""
         if file is None and self.file is not None:
             file = self.file
         os.makedirs(os.path.dirname(file), exist_ok=True)
@@ -163,13 +180,16 @@ class Lg:
                     with open(file, 'w') as f:
                         f.write(str_logs[-total_len:])
 
-    def get_logs(self):
+    def get_logs(self) -> list[str]:
+        """Return the list of accumulated log strings."""
         return self.logs
 
-    def set_file(self, file: str):
+    def set_file(self, file: str) -> None:
+        """Set the log file path."""
         self.file = file
 
-    def enable_logs(self):
+    def enable_logs(self) -> None:
+        """Enable log output to console."""
         self.show_logs = True
 
 def create_log(n: str = "lg", colors: bool = True, file: str | None = None):

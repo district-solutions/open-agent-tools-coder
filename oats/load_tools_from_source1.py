@@ -1,3 +1,10 @@
+"""Dynamically load tool functions from source files and invoke them via an LLM.
+
+Provides utilities to:
+- Load public functions from .py files as OpenAI-compatible tool schemas
+- Auto-select the best tools for a prompt using BM25 / OAT index
+- Run tool-call loops with a LiteLLM-compatible model
+"""
 #!/usr/bin/env python3
 
 import os
@@ -30,6 +37,7 @@ _PY_TO_JSON = {
 }
 
 class OatRepoUses(BaseModel):
+    """Container for OAT repo-level tool schema, prompts, and source file paths."""
     repo_uses_tool_schema_file: str = 'OAT_NOT_INIT'
     repo_uses_prompts: dict = {}
     repo_uses_tool_schema: dict = {}
@@ -40,6 +48,7 @@ class OatRepoUses(BaseModel):
 # ---------------------------------------------------------------------------
 
 def _load_module(path: str):
+    """Dynamically import a Python file as a module."""
     path = os.path.abspath(path)
     name = os.path.splitext(os.path.basename(path))[0]
     spec = importlib.util.spec_from_file_location(name, path)
@@ -154,6 +163,7 @@ def load_tools(file_paths: list[str], verbose: bool = False) -> tuple[list, dict
 # ---------------------------------------------------------------------------
 
 def run_tool_call(model: str, api_base: str, prompt: str, tools: list, tool_impls: dict) -> Tuple[bool, str, list[dict]]:
+    """Run a two-turn tool-call loop: LLM picks tools, we execute, LLM gives final answer."""
     messages = [{"role": "user", "content": prompt}]
 
     call_kwargs = dict(
@@ -238,6 +248,7 @@ repo_uses_prompts = {}
 repo_src_files = []
 
 def get_oat_repo_uses_tools() -> OatRepoUses:
+    """Load and return the OAT repo tool schema, prompts, and source files."""
     global repo_uses_tool_schema
     global repo_uses_prompts
     repo_uses_tool_schema_file = os.getenv("CODER_TOOL_USES_INDEX", "./.ai/AGENT.repo_uses.python.tools.json")
@@ -550,6 +561,7 @@ def run_tool_for_prompt(
 # ---------------------------------------------------------------------------
 
 def main():
+    """CLI entry point for the dynamic tool loader."""
     api_base = os.getenv("TOOL_FUNCTION_1", "http://0.0.0.0:20700/v1")
     model = "openai/google/functiongemma-270m-it"
 

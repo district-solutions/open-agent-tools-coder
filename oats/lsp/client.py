@@ -20,10 +20,12 @@ log = cl("lsp.client")
 
 
 def path_to_uri(path: Path) -> str:
+    """Convert a filesystem path to a file:// URI."""
     return "file://" + quote_from_bytes(str(path.resolve()).encode("utf-8"))
 
 
 def uri_to_path(uri: str) -> str:
+    """Convert a file:// URI back to a filesystem path."""
     parsed = urlparse(uri)
     if parsed.scheme != "file":
         return uri
@@ -31,6 +33,7 @@ def uri_to_path(uri: str) -> str:
 
 
 def language_id_for_path(path: Path) -> str:
+    """Map a file extension to its LSP language ID."""
     ext = path.suffix.lower()
     return {
         ".py": "python",
@@ -51,6 +54,7 @@ def language_id_for_path(path: Path) -> str:
 
 
 def detect_server_command(path: Path) -> list[str] | None:
+    """Detect the LSP server command for a file based on its extension."""
     ext = path.suffix.lower()
     env_map = {
         ".py": "CODER_LSP_SERVER_PYTHON",
@@ -95,6 +99,7 @@ def detect_server_command(path: Path) -> list[str] | None:
 
 
 def detect_workspace_server_command(root_dir: Path) -> list[str] | None:
+    """Detect the best LSP server command for a workspace root."""
     for env_key in [
         "CODER_LSP_SERVER_WORKSPACE",
         "CODER_LSP_SERVER_TYPESCRIPT",
@@ -120,6 +125,7 @@ def detect_workspace_server_command(root_dir: Path) -> list[str] | None:
 
 
 async def _read_lsp_message(reader: asyncio.StreamReader) -> dict[str, Any]:
+    """Read a single LSP/Content-Length message from the server stdout."""
     headers: dict[str, str] = {}
     while True:
         line = await reader.readline()
@@ -141,6 +147,7 @@ async def _write_lsp_message(
     writer: asyncio.StreamWriter,
     payload: dict[str, Any],
 ) -> None:
+    """Write a JSON-RPC message to the LSP server stdin."""
     body = json.dumps(payload).encode("utf-8")
     header = f"Content-Length: {len(body)}\r\n\r\n".encode("utf-8")
     writer.write(header + body)
@@ -149,6 +156,7 @@ async def _write_lsp_message(
 
 @dataclass
 class LSPServerInstance:
+    """Represents a running LSP server process and its state."""
     root_dir: Path
     command: list[str]
     process: asyncio.subprocess.Process | None = None
@@ -160,6 +168,7 @@ class LSPServerInstance:
     diagnostics_by_uri: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
 
     async def start(self) -> None:
+        """Start the LSP server subprocess and initialize it."""
         if self.process is not None:
             return
         self.process = await asyncio.create_subprocess_exec(
@@ -176,6 +185,7 @@ class LSPServerInstance:
         await self._initialize()
 
     async def _initialize(self) -> None:
+        """Send the initialize/initialized handshake to the server."""
         if self.initialized:
             return
         response = await self.request(
@@ -195,6 +205,7 @@ class LSPServerInstance:
         self.initialized = True
 
     async def request(self, method: str, params: dict[str, Any]) -> Any:
+        """Send a JSON-RPC request and wait for the matching response."""
         await self.start()
         assert self.stdin is not None
         assert self.stdout is not None
@@ -219,6 +230,7 @@ class LSPServerInstance:
                 return msg.get("result")
 
     async def notify(self, method: str, params: dict[str, Any]) -> None:
+        """Send a JSON-RPC notification (no response expected)."""
         await self.start()
         assert self.stdin is not None
         await _write_lsp_message(
@@ -231,6 +243,7 @@ class LSPServerInstance:
         )
 
     def _handle_notification(self, msg: dict[str, Any]) -> bool:
+        """Process incoming server notifications; return True if consumed."""
         method = msg.get("method")
         if not method:
             return False
@@ -245,6 +258,7 @@ class LSPServerInstance:
         return True
 
     async def sync_file(self, path: Path, content: str) -> None:
+        """Sync file contents to the LSP server (didOpen or didChange)."""
         uri = path_to_uri(path)
         version = self.file_versions.get(uri, 0)
         if version == 0:
@@ -301,6 +315,7 @@ class LSPManager:
         self._instances: dict[tuple[str, tuple[str, ...]], LSPServerInstance] = {}
 
     def get_instance(self, root_dir: Path, command: list[str]) -> LSPServerInstance:
+        """Get or create an LSP server instance for the given root and command."""
         key = (str(root_dir.resolve()), tuple(command))
         if key not in self._instances:
             self._instances[key] = LSPServerInstance(root_dir=root_dir, command=command)
@@ -311,6 +326,7 @@ _manager: LSPManager | None = None
 
 
 def get_lsp_manager() -> LSPManager:
+    """Return the process-wide LSP manager singleton."""
     global _manager
     if _manager is None:
         _manager = LSPManager()

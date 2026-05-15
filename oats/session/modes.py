@@ -15,6 +15,7 @@ from oats.cli.approval import ApprovalMode
 
 
 class InteractionMode(str, Enum):
+    """Interaction modes that control approval posture and system-prompt overlay."""
     EDIT = "edit"
     AUTO = "auto"
     PLAN = "plan"
@@ -72,10 +73,12 @@ _current: InteractionMode = InteractionMode.EDIT
 
 
 def get_mode() -> InteractionMode:
+    """Return the current interaction mode."""
     return _current
 
 
 def set_mode(mode: InteractionMode) -> None:
+    """Set the current interaction mode and update the approval posture."""
     global _current
     _current = mode
     try:
@@ -91,14 +94,17 @@ def set_mode(mode: InteractionMode) -> None:
 
 
 def mode_guidance(mode: InteractionMode | None = None) -> str:
+    """Return the system-prompt guidance text for the given (or current) mode."""
     return _MODE_GUIDANCE[mode or _current]
 
 
 def approval_for(mode: InteractionMode) -> ApprovalMode:
+    """Return the approval mode corresponding to an interaction mode."""
     return _MODE_APPROVAL[mode]
 
 
 def describe(mode: InteractionMode) -> str:
+    """Return a human-readable description of the interaction mode."""
     return {
         InteractionMode.EDIT: "edit — supervised, ask before writes",
         InteractionMode.AUTO: "auto — all operations auto-approved",

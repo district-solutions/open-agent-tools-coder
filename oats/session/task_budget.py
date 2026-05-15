@@ -13,6 +13,7 @@ from typing import Any
 
 
 def _env_int(name: str, default: int) -> int:
+    """Parse an integer from an environment variable, falling back to *default*."""
     try:
         return int(os.getenv(name, str(default)))
     except (TypeError, ValueError):
@@ -21,6 +22,7 @@ def _env_int(name: str, default: int) -> int:
 
 @dataclass
 class TaskBudgetSnapshot:
+    """Point-in-time snapshot of task budget state."""
     iteration: int
     max_iterations: int
     tool_calls: int
@@ -33,6 +35,7 @@ class TaskBudgetSnapshot:
 
 @dataclass
 class SessionTaskBudget:
+    """Track iteration/tool-call budget and detect repeated-tool churn."""
     max_iterations: int = field(default_factory=lambda: _env_int("CODER_MAX_ITERATIONS", 150))
     max_tool_calls: int = field(default_factory=lambda: _env_int("CODER_MAX_TOOL_CALLS", 300))
     repeated_tool_limit: int = 3
@@ -44,6 +47,7 @@ class SessionTaskBudget:
     _commit_tool_calls: int = 0
 
     def record_tool_call(self, tool_name: str, arguments: dict[str, Any]) -> None:
+        """Record a tool call for budget tracking and repeat detection."""
         normalized = json.dumps(arguments, sort_keys=True, ensure_ascii=True)
         self._tool_calls += 1
         self._history.append((tool_name, normalized))
@@ -63,6 +67,7 @@ class SessionTaskBudget:
         self._history.clear()
 
     def snapshot(self, iteration: int) -> TaskBudgetSnapshot:
+        """Compute the current budget snapshot and pressure level."""
         repeated_streak = self._repeated_streak()
 
         if self._committed:

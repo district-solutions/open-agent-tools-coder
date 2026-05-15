@@ -1,3 +1,4 @@
+"""Data models for the OAT (Open Agent Tools) system."""
 import heapq
 import os
 import re
@@ -11,6 +12,7 @@ from oats.log import gl
 log = gl('oats.models')
 
 class OatPromptChoices(BaseModel):
+    """Container for tool-choice results returned by the OAT index."""
     status: bool = False
     actions: list[str] = []
     prompts: list[str] = []
@@ -23,6 +25,7 @@ class OatPromptChoices(BaseModel):
     version: str = '9'
 
 class OatConfig(BaseModel):
+    """Configuration and index data for OAT tool resolution."""
     repo_uses_index: str = os.getenv("CODER_TOOL_USES_INDEX", "./.ai/AGENT.repo_uses.python.tools.json")
     repo_uses_data: dict = {}
     repo_uses_actions: list = []
@@ -34,6 +37,7 @@ class OatConfig(BaseModel):
     best_impls: dict = {}
 
     def __init__(self, **kwargs):
+        """Load the OAT index file and build action/prompt lookup dictionaries."""
         super().__init__(**kwargs)
         self.best_tools = {}
         self.best_impls = {}
@@ -55,6 +59,7 @@ class OatConfig(BaseModel):
                     self.repo_uses_prompt_dict[action_str].append(src_prompt)
     
     def get_prompt_choices(self, prompt: str, verbose: bool = False) -> OatPromptChoices:
+        """Find tool matches for a prompt using exact and partial string matching."""
         choices = OatPromptChoices()
         choices.status = False
         prompt_splits = prompt.split(' ')

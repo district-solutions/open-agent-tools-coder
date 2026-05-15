@@ -51,6 +51,7 @@ _URL_RE = re.compile(r"https?://[^\s)>\]]+?(?=[.,;:!?)]?(?:\s|$))")
 
 @dataclass
 class CompressionResult:
+    """Result of a caveman-style compression attempt."""
     text: str                   # the text to use (compressed if ok, else original)
     original_chars: int
     compressed_chars: int
@@ -59,6 +60,7 @@ class CompressionResult:
 
     @property
     def reduction(self) -> float:
+        """Return the fraction of characters saved (0.0–1.0)."""
         if not self.compressed or self.original_chars == 0:
             return 0.0
         return 1.0 - (self.compressed_chars / self.original_chars)

@@ -1,7 +1,9 @@
 from typing import Dict, Any
 import ujson as json
 
-def pp(d: Dict[str, Any] | list[Any] | Any | None = None):
+
+def pp(d: Dict[str, Any] | list[Any] | Any | None = None) -> str:
+    """Pretty-print a data structure to a JSON string."""
     if d is None:
         return '{}'
     else:

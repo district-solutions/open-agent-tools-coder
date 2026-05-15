@@ -14,6 +14,7 @@ from typing import Any
 
 
 def trace_enabled() -> bool:
+    """Return True if debug tracing is enabled via CODER_FEATURE_DEBUG_TRACE."""
     value = os.getenv("CODER_FEATURE_DEBUG_TRACE", "0").strip().lower()
     return value in {"1", "true", "yes", "on", "enabled"}
 

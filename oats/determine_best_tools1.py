@@ -31,6 +31,7 @@ log = gl(__name__)
 
 
 def load_schema(schema_path: str) -> dict[str, dict[str, str]]:
+    """Load the tool-uses JSON schema from a file or stdin."""
     if schema_path == "-":
         data = json.load(sys.stdin)
     else:
@@ -55,6 +56,7 @@ def build_corpus(uses: dict[str, dict[str, str]]) -> tuple[list[str], list[dict[
 
 
 def tokenize(text: str) -> list[str]:
+    """Lowercase and split text into whitespace-delimited tokens."""
     return text.lower().split()
 
 
@@ -65,6 +67,7 @@ def rank_with_bm25(
     top_k: int,
     min_score: float,
 ) -> list[dict[str, Any]]:
+    """Rank corpus documents against a query using BM25 scoring."""
     try:
         from rank_bm25 import BM25Okapi
     except ImportError as e:
@@ -89,6 +92,7 @@ def rank_with_tfidf(
     top_k: int,
     min_score: float,
 ) -> list[dict[str, Any]]:
+    """Rank corpus documents against a query using TF-IDF + cosine similarity."""
     try:
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.metrics.pairwise import cosine_similarity
@@ -117,6 +121,7 @@ def rank_with_embeddings(
     min_score: float,
     model_name: str,
 ) -> list[dict[str, Any]]:
+    """Rank corpus documents against a query using dense embeddings + cosine similarity."""
     try:
         from sentence_transformers import SentenceTransformer, util
     except ImportError as e:
@@ -147,6 +152,7 @@ def rerank(
     results: list[dict[str, Any]],
     rerank_model: str,
 ) -> list[dict[str, Any]]:
+    """Rerank candidate results using a cross-encoder model."""
     if not results:
         return results
     try:
@@ -169,6 +175,7 @@ def rerank(
 
 
 def deduplicated(items: list[str]) -> list[str]:
+    """Return a list of unique items preserving first-seen order."""
     seen: set[str] = set()
     out: list[str] = []
     for item in items:
@@ -277,6 +284,7 @@ def determine_best_tools(
 
 
 def main() -> None:
+    """CLI entry point: rank tool matches and print JSON output."""
     tool_uses_index_file = os.getenv('CODER_TOOL_USES_INDEX', './.ai/AGENT.repo_uses.python.tools.json')
     parser = argparse.ArgumentParser(description="Rank tool matches from a uses schema with BM25 / TF-IDF / embeddings + optional reranker")
     parser.add_argument("-p", "--prompt", required=True, help="Search query (e.g. 'get date')")

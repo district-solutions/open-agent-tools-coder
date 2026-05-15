@@ -226,6 +226,7 @@ def run_tool_call(
     model: str | None = None,
     verbose: bool = False,
 ) -> Tuple[bool, str]:
+    """Run a two-turn tool-call loop via LiteLLM and return the final answer."""
 
     if model is None:
         model = 'openai/google/functiongemma-270m-it'
@@ -341,6 +342,7 @@ def run_tool_call(
 # ---------------------------------------------------------------------------
 
 def main():
+    """CLI entry point: load tools from index, wrap as LocalTool, and demo execution."""
     api_base = os.getenv("TOOL_FUNCTION_1", "http://0.0.0.0:20700/v1")
 
     parser = argparse.ArgumentParser(

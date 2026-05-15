@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Date/time utilities for oats."""
 
 from datetime import datetime, timezone, timedelta
 

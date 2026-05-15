@@ -118,6 +118,7 @@ def collect_t1() -> dict:
 
 
 def main():
+    """CLI entry point: interactively generate a coder.json config file."""
     parser = argparse.ArgumentParser(
         description="Generate a coder.json config file interactively.",
     )

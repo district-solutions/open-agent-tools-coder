@@ -11,6 +11,7 @@ from oats.tool.registry import ToolResult
 
 @dataclass
 class RetainedToolResult:
+    """Compressed tool result retained in conversation history."""
     output: str
     metadata: dict
 

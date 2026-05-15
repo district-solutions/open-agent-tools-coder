@@ -63,6 +63,7 @@ class HookContext:
     working_dir: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
+        """Serialize the hook context to a plain dict for JSON encoding."""
         return {
             "session_id": self.session_id,
             "event": self.event.value,
@@ -88,6 +89,7 @@ class HookResult:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "HookResult":
+        """Deserialize a HookResult from a JSON dict."""
         return cls(
             action=data.get("action", "continue"),
             modified_args=data.get("modified_args"),
@@ -96,10 +98,12 @@ class HookResult:
 
     @classmethod
     def continue_result(cls) -> "HookResult":
+        """Return a HookResult that signals the agent to continue."""
         return cls(action="continue")
 
     @classmethod
     def block_result(cls, message: str = "") -> "HookResult":
+        """Return a HookResult that signals the agent to stop."""
         return cls(action="block", message=message)
 
 
