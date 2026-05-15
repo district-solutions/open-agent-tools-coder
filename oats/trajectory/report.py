@@ -20,6 +20,18 @@ from oats.trajectory.metrics import format_report_markdown, report
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI entry point for the trajectory self-improvement report.
+
+    Parses ``--since`` (window in days, default 7) and ``--json`` (emit JSON
+    instead of Markdown). Delegates to :func:`oats.trajectory.metrics.report`
+    and :func:`oats.trajectory.metrics.format_report_markdown`.
+
+    Args:
+        argv: Command-line arguments (defaults to ``sys.argv[1:]``).
+
+    Returns:
+        Exit code (always 0 on success).
+    """
     ap = argparse.ArgumentParser(description="Coder2 self-improvement report")
     ap.add_argument("--since", type=float, default=7.0, help="Window in days (default 7)")
     ap.add_argument("--json", action="store_true", help="Emit JSON instead of Markdown")

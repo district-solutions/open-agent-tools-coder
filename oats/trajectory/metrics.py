@@ -31,6 +31,23 @@ log = cl("oats.trajectory.metrics")
 
 @dataclass
 class TurnMetricRow:
+    """One row from the ``turn_metrics`` table.
+
+    Attributes:
+        session_id: The session this turn belongs to.
+        turn_idx: Sequential turn index within the session.
+        user_prompt: The user's prompt text (truncated to 2000 chars).
+        retrieved_ids: JSON-encoded list of trajectory IDs that were retrieved.
+        retrieved_scores: JSON-encoded list of BM25 scores for retrieved items.
+        retrieval_used: Whether retrieval was used for this turn.
+        iterations: Number of agent-loop iterations the turn took.
+        tool_error_count: Number of tool errors encountered.
+        completed: Whether the turn completed successfully.
+        duration_ms: Turn duration in milliseconds.
+        model_id: The model ID used for this turn.
+        created_at: Timestamp when the row was first inserted.
+        updated_at: Timestamp when the row was last updated.
+    """
     session_id: str
     turn_idx: int
     user_prompt: str | None
@@ -139,6 +156,7 @@ class CohortStats:
 
     @property
     def completion_rate(self) -> float:
+        """Fraction of turns in this cohort that completed successfully."""
         return (self.completed / self.turns) if self.turns else 0.0
 
 
@@ -199,6 +217,17 @@ def report(
 
 
 def format_report_markdown(data: dict) -> str:
+    """Render the report dict as a Markdown table.
+
+    Produces a header with the time window and total turns, followed by a
+    table of cohort statistics and an interpretation note.
+
+    Args:
+        data: The dict returned by :func:`report`.
+
+    Returns:
+        A Markdown-formatted string.
+    """
     lines = [
         "# Coder2 Self-Improvement Report",
         "",

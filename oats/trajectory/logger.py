@@ -45,6 +45,11 @@ def _next_turn(session_id: str, store: TrajectoryStore) -> int:
 
 
 async def _on_user_prompt(ctx: HookContext) -> None:
+    """Hook handler: persist the user's prompt to the trajectory store.
+
+    Skips empty prompts. Assigns the next sequential ``turn_idx`` for the
+    session and records the prompt content as a ``KIND_PROMPT`` row.
+    """
     if not ctx.user_prompt:
         return
     store = get_store()
@@ -59,6 +64,12 @@ async def _on_user_prompt(ctx: HookContext) -> None:
 
 
 async def _on_tool_result(ctx: HookContext) -> None:
+    """Hook handler: persist a tool result to the trajectory store.
+
+    Records the tool name, a compact representation of its arguments, the
+    output (truncated to 2000 chars), and any error (truncated to 500 chars)
+    as a ``KIND_TOOL_RESULT`` row. Assigns the next sequential ``turn_idx``.
+    """
     # We log tool *results* (post_tool_use) because that record carries the
     # full picture — args, outcome, and any error. Pre-tool events would be
     # redundant once this is written.

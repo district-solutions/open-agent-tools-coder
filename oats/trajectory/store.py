@@ -80,6 +80,16 @@ class TrajectoryStore:
     """
 
     def __init__(self, db_path: Path | str | None = None) -> None:
+        """Initialize the trajectory store, creating the database if needed.
+
+        Opens a SQLite connection in WAL mode with autocommit, creates the
+        ``trajectories`` table, the FTS5 virtual table, and the ``turn_metrics``
+        table (with triggers to keep FTS5 in sync).
+
+        Args:
+            db_path: Path to the SQLite database file. Defaults to
+                ``<data_dir>/trajectories.db``.
+        """
         self._path = Path(db_path) if db_path is not None else get_data_dir() / "trajectories.db"
         self._path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
@@ -89,6 +99,11 @@ class TrajectoryStore:
 
     # ── Connection / schema ────────────────────────────────────────
     def _connect(self) -> sqlite3.Connection:
+        """Open a new SQLite connection with WAL mode and relaxed sync.
+
+        Returns:
+            A configured :class:`sqlite3.Connection`.
+        """
         conn = sqlite3.connect(
             str(self._path),
             timeout=1.0,
@@ -102,6 +117,12 @@ class TrajectoryStore:
         return conn
 
     def _init_schema(self) -> None:
+        """Create tables, indexes, and FTS5 triggers if they don't exist.
+
+        Creates the ``trajectories`` table, the ``trajectories_fts`` virtual
+        table, insert/delete triggers to keep FTS5 in sync, and the
+        ``turn_metrics`` table for per-turn self-improvement metrics.
+        """
         with self._lock:
             self._conn.execute(
                 """
@@ -284,6 +305,7 @@ class TrajectoryStore:
         return out
 
     async def asearch(self, query: str, **kwargs) -> list[tuple[float, TrajectoryRecord]]:
+        """Async wrapper around :meth:`search` — offloads to a thread."""
         return await asyncio.to_thread(self.search, query, **kwargs)
 
     def session_turns(self, session_id: str, limit: int = 1000) -> list[TrajectoryRecord]:
@@ -314,6 +336,7 @@ class TrajectoryStore:
             return int(self._conn.execute("SELECT COUNT(*) FROM trajectories").fetchone()[0])
 
     def close(self) -> None:
+        """Close the underlying SQLite connection."""
         with self._lock:
             self._conn.close()
 

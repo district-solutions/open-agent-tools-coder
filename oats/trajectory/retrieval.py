@@ -49,6 +49,17 @@ class Example:
     continuation: list[TrajectoryRecord]
 
     def format(self, *, content_cap: int = DEFAULT_CONTENT_CAP) -> str:
+        """Format this example as a plain-text block for injection into the system prompt.
+
+        Renders the matched past prompt and each continuation turn with its
+        tool name or kind tag. Content is truncated to ``content_cap`` chars.
+
+        Args:
+            content_cap: Maximum characters per content field.
+
+        Returns:
+            A multi-line string with the formatted example.
+        """
         lines = [f"- past prompt: {self.prompt_record.content.strip()[:content_cap]}"]
         for rec in self.continuation:
             tag = rec.tool_name or rec.kind
