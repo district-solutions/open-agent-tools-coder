@@ -69,6 +69,7 @@ class MCPDiscoverTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Discover and list tools across MCP servers, optionally filtered by server or query."""
         try:
             orchestrator = await _get_orchestrator(ctx)
             registry = orchestrator._registry
@@ -154,6 +155,7 @@ class MCPCallTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Call a specific MCP tool by name with the given arguments."""
         try:
             orchestrator = await _get_orchestrator(ctx)
 
@@ -237,6 +239,7 @@ class MCPCallChainTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Execute a chain of tool calls sequentially, passing output between steps."""
         try:
             orchestrator = await _get_orchestrator(ctx)
 
@@ -311,6 +314,7 @@ class MCPFanOutTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Execute multiple tool calls concurrently (fan-out) and aggregate results."""
         try:
             orchestrator = await _get_orchestrator(ctx)
 
@@ -374,6 +378,7 @@ class MCPRankTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Rank MCP tools by relevance to a task description using BM25 + inertia."""
         try:
             orchestrator = await _get_orchestrator(ctx)
             ranked = orchestrator.rank_tools_for_task(
@@ -430,6 +435,7 @@ class MCPSessionSummaryTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Return a summary of an MCP orchestration session (calls, errors, success rate)."""
         try:
             orchestrator = await _get_orchestrator(ctx)
             sid = args.get("session_id", ctx.session_id)
@@ -509,6 +515,7 @@ class MCPServerManageTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
+        """Manage MCP servers: list, add, remove, or check health."""
         try:
             orchestrator = await _get_orchestrator(ctx)
             registry = orchestrator._registry

@@ -112,6 +112,7 @@ class CircuitBreaker:
         max_cooldown_seconds: float = 300.0,
         window_seconds: float = 120.0,
     ) -> None:
+        """Initialize the circuit breaker with configurable thresholds and cooldowns."""
         self._failure_threshold = failure_threshold
         self._base_cooldown = cooldown_seconds
         self._max_cooldown = max_cooldown_seconds
@@ -211,9 +212,11 @@ class CircuitBreaker:
         )
 
     def get_state(self, server_name: str) -> CircuitState:
+        """Return the current circuit state for a server (CLOSED by default)."""
         return self._states.get(server_name, CircuitState.CLOSED)
 
     def get_all_states(self) -> dict[str, CircuitState]:
+        """Return a copy of all server circuit states."""
         return dict(self._states)
 
     def reset(self, server_name: str | None = None) -> None:
@@ -250,6 +253,7 @@ class BackoffStrategy:
         jitter: float = 0.5,
         max_retries: int = 5,
     ) -> None:
+        """Initialize the backoff strategy with configurable delay parameters."""
         self.base_delay = base_delay
         self.max_delay = max_delay
         self.jitter = jitter
@@ -289,6 +293,7 @@ class LoopDetector:
     """
 
     def __init__(self, max_repeats: int = 3) -> None:
+        """Initialize the loop detector with a maximum repeat threshold."""
         self._max_repeats = max_repeats
         # call_signature -> count
         self._seen: dict[str, int] = {}
@@ -308,9 +313,11 @@ class LoopDetector:
         return False
 
     def reset(self) -> None:
+        """Clear all seen call signatures."""
         self._seen.clear()
 
     def _signature(self, tool_name: str, arguments: dict[str, Any]) -> str:
+        """Compute a deterministic hash of tool name + arguments for loop detection."""
         payload = json.dumps({"t": tool_name, "a": arguments}, sort_keys=True)
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
@@ -328,6 +335,7 @@ class DegradationChain:
     """
 
     def __init__(self) -> None:
+        """Initialize the degradation chain with an empty cache."""
         # Simple LRU-style cache: (tool_name, args_hash) -> result
         self._cache: dict[str, str] = {}
         self._cache_timestamps: dict[str, float] = {}
@@ -375,6 +383,7 @@ class DegradationChain:
         return " | ".join(parts)
 
     def _cache_key(self, tool_name: str, arguments: dict[str, Any]) -> str:
+        """Compute a deterministic cache key from tool name and arguments."""
         payload = json.dumps({"t": tool_name, "a": arguments}, sort_keys=True)
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
@@ -417,6 +426,7 @@ class ToolResolver:
     """
 
     def __init__(self, ranker: ToolRanker) -> None:
+        """Initialize the resolver with sub-components for circuit breaking, backoff, etc."""
         self._ranker = ranker
         self._circuit = CircuitBreaker()
         self._backoff = BackoffStrategy()
@@ -426,18 +436,22 @@ class ToolResolver:
 
     @property
     def circuit(self) -> CircuitBreaker:
+        """Return the circuit breaker instance."""
         return self._circuit
 
     @property
     def backoff(self) -> BackoffStrategy:
+        """Return the backoff strategy instance."""
         return self._backoff
 
     @property
     def loops(self) -> LoopDetector:
+        """Return the loop detector instance."""
         return self._loops
 
     @property
     def degradation(self) -> DegradationChain:
+        """Return the degradation chain instance."""
         return self._degradation
 
     def can_call_server(self, server_name: str) -> bool:
@@ -557,6 +571,7 @@ class ToolResolver:
         return record
 
     def should_escalate(self, call_id: str, available_count: int) -> bool:
+        """Check if resolution has tried enough alternatives to warrant escalation."""
         tried = len(self._resolution_history.get(call_id, []))
         return tried >= min(available_count // 2, MAX_RESOLUTION_DEPTH)
 
@@ -565,6 +580,7 @@ class ToolResolver:
         record: ToolCallRecord,
         task_description: str,
     ) -> str:
+        """Build a search query from the failed call's context for BM25 alternative lookup."""
         parts = []
         if task_description:
             parts.append(task_description)
@@ -578,6 +594,7 @@ class ToolResolver:
         return " ".join(parts)
 
     def _is_empty_result(self, result: str | None) -> bool:
+        """Check if a result is effectively empty (None, whitespace, or trivial JSON)."""
         if not result:
             return True
         stripped = result.strip()

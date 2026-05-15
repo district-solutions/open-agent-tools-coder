@@ -52,6 +52,7 @@ class ToolCallTracker:
     """
 
     def __init__(self, tracking_dir: Path | None = None) -> None:
+        """Initialize the tracker with the given base directory for log files."""
         self._base_dir = tracking_dir or Path(
             os.getenv("MCP_TRACKING_DIR", ".coder/mcp_tracking")
         )
@@ -138,6 +139,7 @@ class ToolCallTracker:
     # --- Private ---
 
     def _session_log_path(self, session_id: str) -> Path:
+        """Return the path to the session log file for the given session ID."""
         return self._base_dir / f"{session_id}.md"
 
     def _maybe_rotate(self, filepath: Path, session_id: str) -> None:

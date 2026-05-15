@@ -322,6 +322,7 @@ def tools_to_openapi(tools: list[dict], server_url: str) -> dict:
 
 
 def _build_parser() -> argparse.ArgumentParser:
+    """Build the CLI argument parser for mcp_fetch."""
     parser = argparse.ArgumentParser(
         prog="mcp_fetch",
         description=(

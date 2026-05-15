@@ -90,6 +90,7 @@ class MCPToolDefinition(BaseModel):
 
     @property
     def success_rate(self) -> float:
+        """Fraction of calls that succeeded (0.0 if no calls yet)."""
         if self.call_count == 0:
             return 0.0
         return self.success_count / self.call_count
@@ -155,12 +156,14 @@ class ToolCallRecord(BaseModel):
     max_attempts: int = 1
 
     def mark_complete(self, result: str) -> None:
+        """Mark this call as successful, recording latency."""
         self.status = ToolCallStatus.SUCCESS
         self.result = result
         self.completed_at = time.time()
         self.latency_ms = (self.completed_at - self.started_at) * 1000
 
     def mark_error(self, error: str, category: ErrorCategory = ErrorCategory.UNKNOWN) -> None:
+        """Mark this call as failed, recording the error and category."""
         self.status = ToolCallStatus.ERROR
         self.error = error
         self.error_category = category
@@ -168,9 +171,11 @@ class ToolCallRecord(BaseModel):
         self.latency_ms = (self.completed_at - self.started_at) * 1000
 
     def mark_stuck(self) -> None:
+        """Mark this call as stuck (circuit breaker or repeated failures)."""
         self.status = ToolCallStatus.STUCK
 
     def mark_circuit_open(self, server_name: str) -> None:
+        """Mark this call as blocked by an open circuit breaker."""
         self.status = ToolCallStatus.CIRCUIT_OPEN
         self.error = f"Circuit breaker open for server: {server_name}"
         self.completed_at = time.time()
@@ -262,6 +267,7 @@ class OrchestrationSession(BaseModel):
     timeout_seconds: float = 1800.0  # 30 minutes default
 
     def add_record(self, record: ToolCallRecord) -> None:
+        """Append a call record and update aggregate stats (total_calls, max_depth)."""
         self.call_records.append(record)
         self.total_calls += 1
         if record.depth > self.max_depth:
@@ -299,6 +305,7 @@ class LiteLLMFilteredSpec(BaseModel):
 
     @property
     def reduction_ratio(self) -> float:
+        """Fraction of the original spec size that was removed by filtering."""
         if self.total_original_size_bytes == 0:
             return 0.0
         return 1.0 - (self.filtered_size_bytes / self.total_original_size_bytes)

@@ -56,6 +56,7 @@ class ToolRanker:
     """
 
     def __init__(self) -> None:
+        """Initialize the ranker with empty index, stats, and inertia graph."""
         self._index = RankingIndex()
         self._tool_stats: dict[str, _ToolStats] = {}
         # Tool inertia graph: prev_tool -> {next_tool -> count}
@@ -208,6 +209,7 @@ class ToolRanker:
 
     @property
     def index(self) -> RankingIndex:
+        """Return the current ranking index."""
         return self._index
 
 
@@ -215,6 +217,7 @@ class _ToolStats:
     """Internal statistics tracker for a tool."""
 
     def __init__(self) -> None:
+        """Initialize with zeroed counters and default 0.5 scores."""
         self.total_calls: int = 0
         self.successes: int = 0
         self.failures: int = 0

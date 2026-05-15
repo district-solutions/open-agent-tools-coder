@@ -71,6 +71,7 @@ AGENT_SIGNALS = [
 AGENT_TOOLS = {"agent", "agent_status"}
 
 def get_coder_tool_index() -> str:
+    """Return the path to the coder tool uses index from the environment."""
     coder_tools_index = os.getenv("CODER_TOOL_USES_INDEX", "./.ai/AGENT.repo_uses.python.tools.json")
     return coder_tools_index
 
@@ -351,6 +352,7 @@ def _detect_agent_intent(prompt_lower: str) -> bool:
 
 
 def _detect_planning_intent(prompt_lower: str) -> bool:
+    """Check if the prompt signals planning or multi-step work."""
     for signal in PLANNING_SIGNALS:
         if re.search(signal, prompt_lower):
             return True
@@ -358,6 +360,7 @@ def _detect_planning_intent(prompt_lower: str) -> bool:
 
 
 def _tool_terms(tool: Tool) -> list[str]:
+    """Extract searchable terms from a tool (name, description, aliases, keywords)."""
     terms = [tool.name, tool.description.lower()]
     terms.extend(alias.lower() for alias in tool.aliases)
     terms.extend(keyword.lower() for keyword in tool.keywords)

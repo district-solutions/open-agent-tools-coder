@@ -76,6 +76,7 @@ class MCPOrchestrator:
         tracker: ToolCallTracker | None = None,
         ranker: ToolRanker | None = None,
     ) -> None:
+        """Initialize the orchestrator with its registry, tracker, and ranker."""
         self._registry = registry
         self._tracker = tracker or ToolCallTracker()
         self._ranker = ranker or ToolRanker()
@@ -111,6 +112,7 @@ class MCPOrchestrator:
         return session
 
     def get_session(self, session_id: str) -> OrchestrationSession | None:
+        """Look up an orchestration session by ID."""
         return self._sessions.get(session_id)
 
     async def call_tool(
@@ -275,6 +277,7 @@ class MCPOrchestrator:
         semaphore = asyncio.Semaphore(max_concurrent)
 
         async def _limited_call(call: dict[str, Any]) -> ToolCallRecord:
+            """Execute a single tool call under the concurrency semaphore."""
             async with semaphore:
                 return await self.call_tool(
                     tool_name=call.get("tool", call.get("name", "")),

@@ -63,6 +63,7 @@ class IndexEntry:
         tags: list[str] | None = None,
         parameters: dict[str, Any] | None = None,
     ) -> None:
+        """Initialize an index entry with the given metadata and build its BM25 corpus."""
         self.name = name
         self.description = description
         self.server_name = server_name
@@ -86,6 +87,7 @@ class IndexEntry:
         return tokens
 
     def to_dict(self) -> dict[str, Any]:
+        """Serialize this entry to a plain dict for JSON persistence."""
         return {
             "name": self.name,
             "description": self.description,
@@ -99,6 +101,7 @@ class IndexEntry:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "IndexEntry":
+        """Deserialize an IndexEntry from a plain dict."""
         return cls(
             name=data["name"],
             description=data.get("description", ""),
@@ -119,6 +122,7 @@ class MCPIndex:
     """
 
     def __init__(self) -> None:
+        """Initialize an empty MCP index with default BM25 parameters."""
         self.entries: list[IndexEntry] = []
         self.built_at: float = 0.0
         self.server_count: int = 0
@@ -201,6 +205,7 @@ class MCPIndex:
             self._idf[term] = math.log((n - freq + 0.5) / (freq + 0.5) + 1)
 
     def to_dict(self) -> dict[str, Any]:
+        """Serialize the full index to a plain dict for JSON persistence."""
         return {
             "version": INDEX_VERSION,
             "built_at": self.built_at,
@@ -208,9 +213,9 @@ class MCPIndex:
             "entry_count": len(self.entries),
             "entries": [e.to_dict() for e in self.entries],
         }
-
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "MCPIndex":
+        """Deserialize an MCPIndex from a plain dict, rebuilding BM25 stats."""
         index = cls()
         index.built_at = data.get("built_at", 0.0)
         index.server_count = data.get("server_count", 0)
@@ -220,6 +225,7 @@ class MCPIndex:
 
     @property
     def is_stale(self) -> bool:
+        """Check if the index has exceeded its TTL and needs rebuilding."""
         return (time.time() - self.built_at) > INDEX_TTL_SECONDS
 
 
@@ -377,5 +383,6 @@ async def get_or_build_index(project_dir: Path | None = None) -> MCPIndex:
 
 
 def _index_path(project_dir: Path | None = None) -> Path:
+    """Return the path to the persisted MCP index file."""
     base = project_dir or Path.cwd()
     return base / ".coder" / INDEX_FILENAME

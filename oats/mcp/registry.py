@@ -49,6 +49,7 @@ class MCPServerRegistry:
     """
 
     def __init__(self, project_dir: Path | None = None) -> None:
+        """Initialize the registry, loading server configs from disk."""
         self._project_dir = project_dir or Path.cwd()
         self._servers: dict[str, MCPServerConfig] = {}
         self._tools: dict[str, MCPToolDefinition] = {}
@@ -68,10 +69,12 @@ class MCPServerRegistry:
         await self.discover_all()
 
     def add_server(self, name: str, config: MCPServerConfig) -> None:
+        """Register a new MCP server in the registry."""
         self._servers[name] = config
         log.info(f"server_added: {name}")
 
     def remove_server(self, name: str) -> None:
+        """Remove a server and all its tools from the registry."""
         if name in self._servers:
             del self._servers[name]
         tool_names = self._server_tools.pop(name, [])
@@ -471,6 +474,7 @@ class MCPServerRegistry:
     # --- Query methods ---
 
     def get_tool(self, name: str) -> MCPToolDefinition | None:
+        """Look up a tool by its qualified name."""
         return self._tools.get(name)
 
     def get_route(self, tool_name: str) -> dict[str, str] | None:
@@ -478,15 +482,18 @@ class MCPServerRegistry:
         return self._route_table.get(tool_name)
 
     def list_tools(self, server_name: str | None = None) -> list[MCPToolDefinition]:
+        """List all tools, optionally filtered by server name."""
         if server_name:
             names = self._server_tools.get(server_name, [])
             return [self._tools[n] for n in names if n in self._tools]
         return list(self._tools.values())
 
     def list_servers(self) -> dict[str, MCPServerConfig]:
+        """Return a copy of all registered server configs."""
         return dict(self._servers)
 
     def search_tools(self, query: str) -> list[MCPToolDefinition]:
+        """Search tools by keyword match against name, description, tags, and function name."""
         query_lower = query.lower()
         results = []
         for tool in self._tools.values():
@@ -496,9 +503,11 @@ class MCPServerRegistry:
         return results
 
     def get_server_health(self) -> dict[str, bool]:
+        """Return a copy of the current server health status map."""
         return dict(self._server_health)
 
     async def health_check(self, server_name: str) -> bool:
+        """Probe a server's health endpoint and update its health status."""
         config = self._servers.get(server_name)
         if not config or not config.url:
             return False
@@ -523,11 +532,13 @@ class MCPServerRegistry:
     def get_tools_for_litellm(
         self, server_name: str | None = None, max_tools: int = 50
     ) -> list[dict[str, Any]]:
+        """Return tools in LiteLLM/OpenAI function-calling format."""
         tools = self.list_tools(server_name)[:max_tools]
         return [t.to_litellm_format() for t in tools]
 
     @property
     def needs_rediscovery(self) -> bool:
+        """Check if the tool catalog is stale and needs re-discovery."""
         return (time.time() - self._last_discovery) > self._discovery_ttl
 
 
@@ -555,6 +566,7 @@ _mcp_registry: MCPServerRegistry | None = None
 
 
 def get_mcp_registry(project_dir: Path | None = None) -> MCPServerRegistry:
+    """Return the process-wide MCP server registry, creating it on first use."""
     global _mcp_registry
     if _mcp_registry is None:
         _mcp_registry = MCPServerRegistry(project_dir)
@@ -562,6 +574,7 @@ def get_mcp_registry(project_dir: Path | None = None) -> MCPServerRegistry:
 
 
 async def init_mcp_registry(project_dir: Path | None = None) -> MCPServerRegistry:
+    """Get the global registry and initialize it (discover all tools)."""
     registry = get_mcp_registry(project_dir)
     await registry.initialize()
     return registry
