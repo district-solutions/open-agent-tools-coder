@@ -354,6 +354,7 @@ Requires an appropriate language server installed locally for the file type.
         lines: list[str] = []
 
         def walk(symbols: list[dict[str, Any]], depth: int = 0) -> None:
+            """Recursively walk the symbol tree, appending formatted entries to *lines*."""
             prefix = "  " * depth
             for symbol in symbols:
                 name = symbol.get("name", "<unnamed>")

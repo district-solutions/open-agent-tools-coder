@@ -46,6 +46,8 @@ class ToolContext(BaseModel):
     file_cache: Optional[Any] = None
 
     class Config:
+        """Pydantic config to allow arbitrary types (e.g. ``Path``)."""
+
         arbitrary_types_allowed = True
 
 
@@ -151,7 +153,12 @@ class Tool(ABC):
         return None
 
     def to_definition(self) -> dict[str, Any]:
-        """Convert to LLM tool definition format."""
+        """Convert this tool to an LLM-compatible tool definition.
+
+        Returns:
+            A dict with ``name``, ``description``, and ``parameters`` keys
+            suitable for inclusion in an LLM function-calling schema.
+        """
         return {
             "name": self.name,
             "description": self.description,
@@ -168,6 +175,7 @@ class ToolRegistry:
     """
 
     def __init__(self) -> None:
+        """Initialize an empty tool registry."""
         self._tools: dict[str, Tool] = {}
 
     def register(self, tool: Tool) -> None:

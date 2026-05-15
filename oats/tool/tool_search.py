@@ -13,9 +13,16 @@ log = cl('tool.search')
 
 
 def _tokenize(text: str) -> set[str]:
-    """Split *text* into lowercase alphanumeric tokens.
+    """Split *text* into lowercase alphanumeric tokens for fuzzy matching.
 
-    Strips punctuation and returns a set of word-like tokens for fuzzy matching.
+    Strips punctuation and returns a set of word-like tokens (alphanumeric
+    sequences that may include underscores, dots, slashes, and hyphens).
+
+    Args:
+        text: The input text to tokenize.
+
+    Returns:
+        A set of lowercase token strings.
     """
     return set(re.findall(r"[a-z0-9_./-]+", text.lower()))
 

@@ -175,7 +175,24 @@ Supports:
         context_lines: int,
         output_mode: str,
     ) -> ToolResult:
-        """Search using ripgrep."""
+        """Search files using the ripgrep (``rg``) binary.
+
+        Builds the ``rg`` command with the appropriate flags for case sensitivity,
+        output mode (files/count/content), glob filters, and file type filters.
+        Results are truncated to MAX_RESULTS.
+
+        Args:
+            pattern: The regex pattern to search for.
+            base_path: The directory to search in.
+            glob_pattern: Optional glob pattern to filter files.
+            file_type: Optional file type to filter by (e.g. ``py``, ``js``).
+            case_insensitive: Whether to search case-insensitively.
+            context_lines: Number of context lines to include.
+            output_mode: One of ``files``, ``count``, or ``content``.
+
+        Returns:
+            A :class:`ToolResult` with the search results.
+        """
         cmd = ["rg", "--color=never", "--no-heading"]
 
         if case_insensitive:
@@ -261,7 +278,23 @@ Supports:
         case_insensitive: bool,
         output_mode: str,
     ) -> ToolResult:
-        """Fallback Python-based search."""
+        """Fallback search using Python's ``re`` module when ripgrep is unavailable.
+
+        Walks the directory tree, applies glob and file type filters, and searches
+        each file's contents with the compiled regex pattern. Results are truncated
+        to MAX_RESULTS.
+
+        Args:
+            pattern: The regex pattern to search for.
+            base_path: The directory to search in.
+            glob_pattern: Optional glob pattern to filter files.
+            file_type: Optional file type to filter by (e.g. ``py``, ``js``).
+            case_insensitive: Whether to search case-insensitively.
+            output_mode: One of ``files``, ``count``, or ``content``.
+
+        Returns:
+            A :class:`ToolResult` with the search results.
+        """
         try:
             flags = re.IGNORECASE if case_insensitive else 0
             regex = re.compile(pattern, flags)

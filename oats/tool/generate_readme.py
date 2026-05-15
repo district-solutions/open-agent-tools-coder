@@ -219,7 +219,19 @@ Example: generate_readme path=./oats/cli
         return content
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
-        """Execute the README generation."""
+        """Scan a directory and generate README.md files for each subdirectory.
+
+        Validates the target path, analyzes Python modules in each subdirectory
+        (extracting docstrings via AST), and writes a README.md file per
+        subdirectory with module overviews, descriptions, and usage examples.
+
+        Args:
+            args: May contain ``path`` (str, directory to scan, default: current dir).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with a summary of README files generated.
+        """
         # Determine path to scan
         path_str = args.get("path", ".")
         scan_path = Path(path_str).resolve()
@@ -319,6 +331,7 @@ if __name__ == "__main__":
 
     # Execute with current directory
     async def main():
+        """Standalone entry point for testing the README generation tool."""
         try:
             result = await tool.execute({"path": "."}, ctx)
             print(result.output)

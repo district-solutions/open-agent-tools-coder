@@ -108,7 +108,25 @@ class AgentTool(Tool):
         }
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
-        """Spawn and run a sub-agent."""
+        """Spawn and run a sub-agent to handle a delegated task.
+
+        Validates the prompt, checks the agent nesting depth limit, and either
+        runs the sub-agent synchronously or spawns it as a background task. The
+        sub-agent gets its own session, tool access (filtered by agent type),
+        and optional git worktree isolation.
+
+        Args:
+            args: Must contain ``prompt`` (str). May contain ``agent_type`` (str,
+                one of ``general``, ``explore``, ``plan``, ``verify``),
+                ``model_override`` (str), ``provider_override`` (str),
+                ``working_dir`` (str), ``run_in_background`` (bool), and
+                ``isolation`` (str, ``none`` or ``worktree``).
+            ctx: The tool execution context.
+
+        Returns:
+            A :class:`ToolResult` with the sub-agent's output (synchronous mode)
+            or a launch confirmation with ``agent_id`` (background mode).
+        """
         prompt = args.get("prompt", "")
         agent_type_str = args.get("agent_type", "general")
         model_override = args.get("model_override")

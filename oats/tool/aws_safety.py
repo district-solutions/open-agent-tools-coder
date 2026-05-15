@@ -195,7 +195,17 @@ def classify(command: str) -> AwsCommandInfo:
 def redact_secrets(text: str) -> tuple[str, int]:
     """Scrub AWS access keys, secret keys, and session tokens from text.
 
-    Returns (redacted_text, num_redactions).
+    Applies three regex patterns to detect and redact:
+    - Access key IDs (AKIA/ASIA/AIDA/AROA/AGPA/ANPA prefixes)
+    - Secret access keys (key=value or key: value patterns)
+    - Session tokens (key=value or key: value patterns)
+
+    Args:
+        text: The text to scrub (typically command output).
+
+    Returns:
+        A tuple of ``(redacted_text, num_redactions)`` where ``num_redactions``
+        is the total number of secrets that were redacted.
     """
     if not text:
         return text, 0
@@ -203,16 +213,19 @@ def redact_secrets(text: str) -> tuple[str, int]:
     count = 0
 
     def _ak_sub(m: re.Match) -> str:
+        """Redact an AWS access key ID, preserving the prefix."""
         nonlocal count
         count += 1
         return f"{m.group(1)}****************"
 
     def _sk_sub(m: re.Match) -> str:
+        """Redact an AWS secret access key, preserving surrounding delimiters."""
         nonlocal count
         count += 1
         return f"{m.group(1)}[redacted]{m.group(3)}"
 
     def _st_sub(m: re.Match) -> str:
+        """Redact an AWS session token, preserving surrounding delimiters."""
         nonlocal count
         count += 1
         return f"{m.group(1)}[redacted]{m.group(3)}"
