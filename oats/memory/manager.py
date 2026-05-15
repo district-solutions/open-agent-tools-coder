@@ -31,6 +31,12 @@ class MemoryManager:
         user_dir: Path | None = None,
         project_dir: Path | None = None,
     ) -> None:
+        """Initialize the memory manager with user and project directories.
+
+        Args:
+            user_dir: Directory for user-global memories (default: ``~/.coder/memory``).
+            project_dir: Directory for project-local memories (default: ``<project>/.coder/memory``).
+        """
         self._user_dir = user_dir or Path.home() / ".coder" / "memory"
         self._project_dir = (
             Path(str(project_dir)) / ".coder" / "memory"
